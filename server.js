@@ -1,6 +1,6 @@
-const net = require('net')
+const net = require('net');
 
-const STUDENT_ID = '13323657'
+const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 1;
 
 var clients = [];
@@ -38,6 +38,7 @@ function handle(data, socket) {
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
   } else if (command === 'KILL_SERVICE\n'){
+    clients.splice(clients.indexOf(socket), 1);
     socket.destroy();
     server.close();
   } else {
