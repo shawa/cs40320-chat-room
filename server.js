@@ -2,12 +2,13 @@ const net = require('net');
 
 const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 1;
+let n_clients = 0;
 
 const server = net.createServer(socket => {
   socket.name = socket.remoteAddress + ":" + socket.remotePort;
 
-  if (clients.length < MAX_CLIENTS) {
-    clients.push(socket);
+  if (n_clients < MAX_CLIENTS) {
+    n_clients++;
   } else {
     console.log("Ah man, we had to ignore this one");
     socket.destroy();
@@ -20,7 +21,7 @@ const server = net.createServer(socket => {
 
   socket.on('end', () => {
     console.log(`${socket.name}: ended`);
-    clients.splice(clients.indexOf(socket), 1);
+    n_clients--;
     socket.destroy();
   });
 
@@ -36,7 +37,7 @@ function handle(buffer , socket) {
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
   } else if (command === 'KILL_SERVICE\n'){
-    clients.splice(clients.indexOf(socket), 1);
+    n_clients--;
     socket.destroy();
     server.close();
   } else {
