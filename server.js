@@ -45,4 +45,4 @@ function handle(buffer , socket) {
   }
 }
 
-server.listen(5000);
+server.listen(5000, '0.0.0.0');
