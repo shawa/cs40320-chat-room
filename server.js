@@ -15,9 +15,9 @@ const server = net.createServer(socket => {
     socket.destroy();
   }
 
-  socket.on('data', data => {
-    console.log(`${socket.name}: ${data}`);
-    handle(data, socket);
+  socket.on('data', buffer => {
+    console.log(`${socket.name}: ${buffer }`);
+    handle(buffer, socket);
   });
 
   socket.on('end', () => {
@@ -28,8 +28,8 @@ const server = net.createServer(socket => {
 
 });
 
-function handle(data, socket) {
-  const command = data.toString();
+function handle(buffer , socket) {
+  const command = buffer.toString();
   if (/HELO .+\n/.test(command)) {
     socket.write([
       `HELO ${command.match(/HELO (.+)\n/)[1]}`,
