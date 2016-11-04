@@ -3,8 +3,6 @@ const net = require('net');
 const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 1;
 
-var clients = [];
-
 const server = net.createServer(socket => {
   socket.name = socket.remoteAddress + ":" + socket.remotePort;
 
