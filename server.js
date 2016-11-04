@@ -1,40 +1,45 @@
-const STUDENT_ID = '13323657'
 const net = require('net')
 
-// Keep track of the chat clients
+const STUDENT_ID = '13323657'
+const MAX_CLIENTS = 1;
+
 var clients = [];
 
-// Start a TCP Server
 const server = net.createServer(socket => {
-  socket.name = socket.remoteAddress + ":" + socket.remotePort
+  socket.name = socket.remoteAddress + ":" + socket.remotePort;
 
-  clients.push(socket);
+  if (clients.length < MAX_CLIENTS) {
+    clients.push(socket);
+  } else {
+    console.log("Ah man, we had to ignore this one");
+    socket.destroy();
+  }
 
   socket.on('data', function (data) {
-    console.log(`${socket.name}: ${data}`)
-    handle(data, socket)
-  })
+    console.log(`${socket.name}: ${data}`);
+    handle(data, socket);
+  });
 
   socket.on('end', function () {
-    clients.splice(clients.indexOf(socket), 1)
-    console.log(`${socket.name}: ended`)
-  })
-})
+    clients.splice(clients.indexOf(socket), 1);
+    console.log(`${socket.name}: ended`);
+  });
+});
 
 function handle(data, socket) {
-  const command = data.toString()
+  const command = data.toString();
   if (/HELO .+\n/.test(command)) {
     socket.write([
       `HELO ${command.match(/HELO (.+)\n/)[1]}`,
       `IP: ${socket.remoteAddress}`,
       `Port: ${socket.remotePort}`,
       `StudentID: ${STUDENT_ID}\n`,
-    ].join("\n"))
+    ].join("\n"));
+  } else if (command === 'KILL_SERVICE\n'){
+    this.destroy();
   } else {
-    console.log(`Unknown command ${command}`)
-  } else if (command === 'KILL_SERVICE\n') {
-    this.destroy()
+    console.log(`Unknown command ${command}`);
   }
 }
 
-server.listen(5000)
+server.listen(5000);
