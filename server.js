@@ -15,15 +15,17 @@ const server = net.createServer(socket => {
     socket.destroy();
   }
 
-  socket.on('data', function (data) {
+  socket.on('data', data => {
     console.log(`${socket.name}: ${data}`);
     handle(data, socket);
   });
 
-  socket.on('end', function () {
-    clients.splice(clients.indexOf(socket), 1);
+  socket.on('end', () => {
     console.log(`${socket.name}: ended`);
+    clients.splice(clients.indexOf(socket), 1);
+    socket.destroy();
   });
+
 });
 
 function handle(data, socket) {
@@ -36,7 +38,8 @@ function handle(data, socket) {
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
   } else if (command === 'KILL_SERVICE\n'){
-    this.destroy();
+    socket.destroy();
+    server.close();
   } else {
     console.log(`Unknown command ${command}`);
   }
