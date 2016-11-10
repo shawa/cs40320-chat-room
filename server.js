@@ -7,7 +7,7 @@ let n_clients = 0;
 
 function loggit(message) {
   if (!DEBUG) return;
-  const date = new Date().toUTCString();
+  const date = new Date().toTimeString();
   console.log(`${date}: ${message}`);
 }
 
@@ -43,15 +43,51 @@ function parseMsg(message) {
     const [key, value] = row.split(': ');
     result[key] = value;
   }
+
+  message.type = rows[0].split[': '];
+
   delete result[''];
   return result;
 }
 
-function handleMsg(msg) {
-  if ('JOIN_CHATROOM' in msg) {
-    loggit(`${msg.CLIENT_NAME} joining ${msg.JOIN_CHATROOM}`);
+function formatMsg(message) {
+  const result = [];
+  for (let [key, value] of message) {
+    result.push[`${key}: ${value}`];
   }
+  return result.join('\n');
 }
+
+
+const joinId = (() => {
+  const ids = {};
+  let lastId = 0;
+
+  return (clientName) => {
+    if (ids[clientName] === void 0)  {
+      const newId = lastId + 1;
+      ids[clientName] = newId;
+      lastId = newId;
+    }
+    return ids[clientName];
+  };
+})();
+
+const handlers = {
+  JOIN_CHATROOM: msg => {
+    loggit(`${msg.CLIENT_NAME} joining ${msg.JOIN_CHATROOM}`);
+    const roomName = msg.JOIN_CHATROOM;
+    const id = roomIds[roomName];
+    response = [
+      ['JOINED_CHATROOM', `${room}`],
+      ['SERVER_IP', `${MY_IP}`],
+      ['PORT', '0'],
+      ['ROOM_REF', 'id'],
+      ['JOIN_ID', `${joinId(msg.CLIENT_NAME)}`],
+    ]
+  }
+};
+
 
 function handle(buffer , socket) {
   const message = buffer.toString();
@@ -68,8 +104,10 @@ function handle(buffer , socket) {
     server.close();
   } else {
     const command = parseMsg(message);
-    response = handleMsg(command);
+    response = handlers[command.type](command);
+    socket.write(response);
   }
 }
 
 server.listen(5000, '0.0.0.0');
+loggit(`Listening on 0.0.0.0:5000`);
