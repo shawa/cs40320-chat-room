@@ -1,7 +1,7 @@
 const net = require('net');
 
 const STUDENT_ID = '13323657';
-const MAX_CLIENTS = 1;
+const MAX_CLIENTS = 3;
 let n_clients = 0;
 
 const server = net.createServer(socket => {
@@ -32,7 +32,7 @@ function handle(buffer , socket) {
   if (/HELO .+\n/.test(command)) {
     socket.write([
       `HELO ${command.match(/HELO (.+)\n/)[1]}`,
-      `IP: ${socket.remoteAddress}`,
+      `IP: ${MAX_CLIENTS}`,
       `Port: ${socket.remotePort}`,
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
