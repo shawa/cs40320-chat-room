@@ -2,7 +2,15 @@ const net = require('net');
 
 const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 3;
+const DEBUG = true;
 let n_clients = 0;
+
+function loggit(message) {
+  if (!DEBUG) return;
+  const date = new Date().toUTCString();
+  console.log(`${date}: ${message}`);
+}
+
 
 const server = net.createServer(socket => {
   socket.name = socket.remoteAddress + ":" + socket.remotePort;
@@ -10,38 +18,57 @@ const server = net.createServer(socket => {
   if (n_clients < MAX_CLIENTS) {
     n_clients++;
   } else {
-    console.log("Ah man, we had to ignore this one");
+    loggit("Ah man, we had to ignore this one");
     socket.destroy();
   }
 
   socket.on('data', buffer => {
-    console.log(`${socket.name}: ${buffer }`);
+    loggit(`${socket.name}: ${buffer }`);
     handle(buffer, socket);
   });
 
   socket.on('end', () => {
-    console.log(`${socket.name}: ended`);
+    loggit(`${socket.name}: ended`);
     n_clients--;
     socket.destroy();
   });
 
 });
 
+function parseMsg(message) {
+  const rows = message.split('\n');
+  const result = {};
+
+  for (let row of rows) {
+    const [key, value] = row.split(': ');
+    result[key] = value;
+  }
+  delete result[''];
+  return result;
+}
+
+function handleMsg(msg) {
+  if ('JOIN_CHATROOM' in msg) {
+    loggit(`${msg.CLIENT_NAME} joining ${msg.JOIN_CHATROOM}`);
+  }
+}
+
 function handle(buffer , socket) {
-  const command = buffer.toString();
-  if (/HELO .+\n/.test(command)) {
+  const message = buffer.toString();
+  if (/HELO .+\n/.test(message)) {
     socket.write([
-      `HELO ${command.match(/HELO (.+)\n/)[1]}`,
+      `HELO ${message.match(/HELO (.+)\n/)[1]}`,
       `IP: ${MAX_CLIENTS}`,
       `Port: ${socket.remotePort}`,
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
-  } else if (command === 'KILL_SERVICE\n'){
+  } else if (message === 'KILL_SERVICE\n'){
     n_clients--;
     socket.destroy();
     server.close();
   } else {
-    console.log(`Unknown command ${command}`);
+    const command = parseMsg(message);
+    response = handleMsg(command);
   }
 }
 
