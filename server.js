@@ -1,4 +1,6 @@
 const net = require('net');
+const messages = require('./messages');
+
 
 const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 3;
@@ -35,28 +37,6 @@ const server = net.createServer(socket => {
 
 });
 
-function parseMsg(message) {
-  const rows = message.split('\n');
-  const result = {};
-
-  for (let row of rows) {
-    const [key, value] = row.split(': ');
-    result[key] = value;
-  }
-
-  message.type = rows[0].split[': '];
-
-  delete result[''];
-  return result;
-}
-
-function formatMsg(message) {
-  const result = [];
-  for (let [key, value] of message) {
-    result.push[`${key}: ${value}`];
-  }
-  return result.join('\n');
-}
 
 
 const joinId = (() => {
