@@ -48,7 +48,7 @@ const msgs = {
     `CLIENT_NAME: (${CLIENT_NAME_EXPR})`,
 
     (roomRef, joinId, clientName) => {
-      _joinId = parseInt(joinId);
+      const _joinId = parseInt(joinId);
       chatty.leave(roomRef, _joinId, clientName);
       return {
         roomRef: roomRef,
@@ -63,7 +63,6 @@ const msgs = {
 
 
 function execute(input, message) {
-  debugger;
   const matched = input.match(message.matcher);
   if (!matched) {
     return false;
