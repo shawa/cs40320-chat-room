@@ -14,10 +14,10 @@ const message = (pattern, sideEffects, responseTemplate) => {
 
 const msgs = {
   CLIENT_JOIN: message(
-    'JOIN_CHATROOM: (.+)\n' +
+    'JOIN_CHATROOM: ([0-9a-zA-Z].+)\n' +
     'CLIENT_IP: 0\n' +
     'PORT: 0\n' +
-    'CLIENT_NAME: (.+)',
+    'CLIENT_NAME: ([0-9a-zA-Z].+)',
 
     (roomName, clientName) => {
       const {joinId, roomRef} = chatty.join(roomName, clientName);
@@ -52,9 +52,7 @@ function execute(input, message) {
 
 
 const MSG_KEYS = ['CLIENT_JOIN'];
-
 function handle(input) {
-  console.log(MSG_KEYS);
   let response;
   for (let key of MSG_KEYS) {
     response = execute(input, msgs[key]);

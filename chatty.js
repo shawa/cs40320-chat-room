@@ -17,27 +17,35 @@ function chatRoom(roomName) {
   return {
     roomName: roomName,
     roomRef: ref,
-    clients: [],
+    clients: {},
   };
 }
 
 function join(roomName, clientName) {
   console.log(`New join request to ${roomName} from ${clientName}`);
   let room = rooms[roomName];
+
   if (!room) {
     room = chatRoom(roomName);
     rooms[roomName] = room;
   }
 
+  if (clientName in room.clients) {
+    return room.clients[clientName];
+  }
 
-  // TODO Client already in room
-  room.clients.push(clientName);
-  const joinId = getJoinId();
-  const roomRef = rooms[roomName].roomRef;
+  console.log(`${clientName} not in ${roomName}; adding them`);
+
+  const clientInfo = {
+    clientName: clientName,
+    joinId: getJoinId(),
+  };
+
+  room.clients[clientName] = clientInfo;
 
   return {
-    joinId: joinId,
-    roomRef: roomRef,
+    joinId: clientInfo.joinId,
+    roomRef: room.roomRef,
   };
 }
 
