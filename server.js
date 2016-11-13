@@ -1,7 +1,6 @@
 const net = require('net');
 const messages = require('./messages');
 
-
 const STUDENT_ID = '13323657';
 const MAX_CLIENTS = 3;
 const DEBUG = true;
@@ -53,38 +52,22 @@ const joinId = (() => {
   };
 })();
 
-const handlers = {
-  JOIN_CHATROOM: msg => {
-    loggit(`${msg.CLIENT_NAME} joining ${msg.JOIN_CHATROOM}`);
-    const roomName = msg.JOIN_CHATROOM;
-    const id = roomIds[roomName];
-    response = [
-      ['JOINED_CHATROOM', `${room}`],
-      ['SERVER_IP', `${MY_IP}`],
-      ['PORT', '0'],
-      ['ROOM_REF', 'id'],
-      ['JOIN_ID', `${joinId(msg.CLIENT_NAME)}`],
-    ]
-  }
-};
-
 
 function handle(buffer , socket) {
-  const message = buffer.toString();
-  if (/HELO .+\n/.test(message)) {
+  const received = buffer.toString();
+  if (/HELO .+\n/.test(received)) {
     socket.write([
-      `HELO ${message.match(/HELO (.+)\n/)[1]}`,
+      `HELO ${received.match(/HELO (.+)\n/)[1]}`,
       `IP: ${MAX_CLIENTS}`,
       `Port: ${socket.remotePort}`,
       `StudentID: ${STUDENT_ID}\n`,
     ].join("\n"));
-  } else if (message === 'KILL_SERVICE\n'){
+  } else if (received === 'KILL_SERVICE\n'){
     n_clients--;
     socket.destroy();
     server.close();
   } else {
-    const command = parseMsg(message);
-    response = handlers[command.type](command);
+    let response = messages.handle(received);
     socket.write(response);
   }
 }
