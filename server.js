@@ -1,4 +1,5 @@
 const net = require('net');
+const winston = require('winston');
 const messages = require('./messages');
 
 const STUDENT_ID = '13323657';
@@ -6,30 +7,23 @@ const MAX_CLIENTS = 3;
 const DEBUG = true;
 let n_clients = 0;
 
-function loggit(message) {
-  if (!DEBUG) return;
-  const date = new Date().toTimeString();
-  console.log(`${date}: ${message}`);
-}
-
-
 const server = net.createServer(socket => {
   socket.name = socket.remoteAddress + ":" + socket.remotePort;
 
   if (n_clients < MAX_CLIENTS) {
     n_clients++;
   } else {
-    loggit("Ah man, we had to ignore this one");
+    winston.log('info', "Ah man, we had to ignore this one");
     socket.destroy();
   }
 
   socket.on('data', buffer => {
-    loggit(`${socket.name}: ${buffer }`);
+    winston.log('info', `${socket.name}: ${buffer }`);
     handle(buffer, socket);
   });
 
   socket.on('end', () => {
-    loggit(`${socket.name}: ended`);
+    winston.log('info', `${socket.name}: ended`);
     n_clients--;
     socket.destroy();
   });
@@ -57,4 +51,4 @@ function handle(buffer , socket) {
 }
 
 server.listen(5000, '0.0.0.0');
-loggit(`Listening on 0.0.0.0:5000`);
+winston.log('info', `Listening on 0.0.0.0:5000`);

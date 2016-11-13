@@ -1,3 +1,4 @@
+const winston = require('winston');
 const rooms = {};
 
 const getRoomRef = (() => {
@@ -12,7 +13,7 @@ const getJoinId = (() => {
 
 function chatRoom(roomName) {
   const ref = getRoomRef();
-  console.log(`Creating new room ${roomName} with id ${ref}`);
+  winston.log('info', `Creating new room ${roomName} with id ${ref}`);
 
   return {
     roomName: roomName,
@@ -22,7 +23,7 @@ function chatRoom(roomName) {
 }
 
 function join(roomName, clientName) {
-  console.log(`New join request to ${roomName} from ${clientName}`);
+  winston.log('info', `New join request to ${roomName} from ${clientName}`);
   let room = rooms[roomName];
 
   if (!room) {
@@ -34,7 +35,7 @@ function join(roomName, clientName) {
     return room.clients[clientName];
   }
 
-  console.log(`${clientName} not in ${roomName}; adding them`);
+  winston.log('info', `${clientName} not in ${roomName}; adding them`);
 
   const clientInfo = {
     clientName: clientName,
