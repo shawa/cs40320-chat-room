@@ -37,22 +37,6 @@ const server = net.createServer(socket => {
 });
 
 
-
-const joinId = (() => {
-  const ids = {};
-  let lastId = 0;
-
-  return (clientName) => {
-    if (ids[clientName] === void 0)  {
-      const newId = lastId + 1;
-      ids[clientName] = newId;
-      lastId = newId;
-    }
-    return ids[clientName];
-  };
-})();
-
-
 function handle(buffer , socket) {
   const received = buffer.toString();
   if (/HELO .+\n/.test(received)) {

@@ -20,11 +20,12 @@ const msgs = {
     'CLIENT_NAME: (.+)',
 
     (roomName, clientName) => {
-      console.log(clientName);
+      const {joinId, roomRef} = chatty.join(roomName, clientName);
+
       return {
         roomName: roomName,
-        roomRef: chatty.getRoomRef(roomName),
-        joinId: chatty.getJoinId(),
+        roomRef: roomRef,
+        joinId: joinId,
       };
     },
 
