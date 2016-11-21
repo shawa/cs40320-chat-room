@@ -105,7 +105,7 @@ defmodule Echo do
     """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{client_name} joined ##{room_name}\n
+    MESSAGE:#{client_name} joined #{room_name}\n
     """ |> post_to(room_ref)
   end
 
@@ -177,6 +177,8 @@ defmodule Echo do
   end
 
   defp post_to message, room_ref do
+    IO.inspect(message)
+
     Registry.dispatch(Echo.Rooms, room_ref, fn entries -> for {_, {_, _, sock}} <- entries, do: write_to(message, sock) end)
 
   end
