@@ -183,6 +183,7 @@ defmodule Echo do
   end
 
   defp post_to message, room_ref do
+    Logger.info "Posting this to #{room_ref}:"
     IO.inspect(message)
 
     Registry.dispatch(Echo.Rooms, room_ref, fn entries -> for {_, {_, _, sock}} <- entries, do: write_to(message, sock) end)
