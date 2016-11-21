@@ -107,15 +107,14 @@ defmodule Echo do
     """ |> post_to(room_ref)
   end
 
-  defp handle :guillotine, data, socket do
+  defp handle :guillotine, _data, _socket do
     Logger.info "Killing service"
     System.halt(0)
   end
 
   defp handle :helo, data, socket do
     """
-    HELO #{text}
-    IP:#{@ip}
+    #{data}IP:#{@ip}
     Port:#{@port}
     StudentID:#{@id}
     """ |> write_to(socket)
@@ -151,7 +150,7 @@ defmodule Echo do
     """ |> post_to(room_ref)
   end
 
-  defp handle :noidea, data, socket do
+  defp handle :noidea, data, _socket do
     Logger.info("well, I don't know what to do with this:\n#{data}")
   end
 
