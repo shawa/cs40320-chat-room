@@ -95,15 +95,15 @@ defmodule Echo do
     {:ok, _} = Registry.register(Echo.Rooms, room_ref, {client_name, join_id, socket})
 
     """
-    JOINED_CHATROOM: #{room_name}
+    JOINED_CHATROOM:#{room_name}
     SERVER_IP: #{@ip}
-    PORT: #{0}
-    ROOM_REF: #{room_ref}
-    JOIN_ID: #{join_id}
+    PORT:#{0}
+    ROOM_REF:#{room_ref}
+    JOIN_ID:#{join_id}
     """ |> write_to(socket)
 
     """
-    CHAT:#{client_name}
+    CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
     MESSAGE:#{client_name} joined ##{room_name}
     """ |> post_to(room_ref)
