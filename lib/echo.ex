@@ -105,7 +105,7 @@ defmodule Echo do
     """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{client_name} joined ##{room_name}\n\n
+    MESSAGE:#{client_name} joined ##{room_name}\n
     """ |> post_to(room_ref)
   end
 
@@ -124,7 +124,7 @@ defmodule Echo do
 
   defp handle :leave, data, socket do
     {room_ref, join_id, client_name} = values(data)
-    Logger.info("leave from #{client_name} of ${room_ref}, with join id #{join_id}")
+    Logger.info("leave from #{client_name} of #{room_ref}, with join id #{join_id}")
 
     # TODO: remove a client from this list
     # take the client id and drop it from the keys()
@@ -148,7 +148,7 @@ defmodule Echo do
     """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{message}\n\n
+    MESSAGE:#{message}\n
     """ |> post_to(room_ref)
   end
 
