@@ -85,7 +85,7 @@ defmodule Echo do
 
 
   defp handle :join, data, socket do
-    {room_name, _, _, client_name, _} = values(data)
+    {room_name, _, _, client_name} = values(data)
 
     Logger.info("join from #{client_name} to #{room_name}")
 
