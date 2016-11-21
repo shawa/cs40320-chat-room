@@ -137,7 +137,7 @@ defmodule Echo do
     """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{client_name} left the room\n
+    MESSAGE:#{client_name} left the room\n\n
     """ |> post_to(room_ref)
   end
 
@@ -154,7 +154,7 @@ defmodule Echo do
     """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{message}\n
+    MESSAGE:#{message}\n\n
     """ |> post_to(room_ref)
   end
 
