@@ -58,19 +58,28 @@ defmodule Echo do
 
   defp serve socket do
       case :gen_tcp.recv(socket, 0) do
-       {:ok, data} -> handle(data, socket)
-                      serve socket
+       {:ok, data}       -> handle(data, socket)
+                            serve socket
 
-        _          -> Logger.info "client hung up"
+       {:error, :closed} -> Logger.info "client hung up"
+                            :ok
        end
   end
 
+
   defp handle data, socket do
+    vals = values(data)
+  end
+
+  defp values data do
     command = data
       |> String.split("\n")
-      |> Enum.map(fn(x) -> String.split(x, ":") end)
-
-    Logger.info(command)
+      |> Enum.map(fn(x) -> String.split(x, ":")
+                          |> tl
+                          |> Enum.join("")
+                          |> String.lstrip end)
+      |> List.to_tuple
+    Logger.info(Enum.join(Tuple.to_list(command)))
   end
 
   defp write_line line, socket do
