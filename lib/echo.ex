@@ -134,11 +134,13 @@ defmodule Echo do
     JOIN_ID:#{join_id}
     """ |> write_to(socket)
 
-    """
+    messij = """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{client_name} left the room\n\n
-    """ |> post_to(room_ref)
+    MESSAGE:#{client_name} left the room\n
+    """
+    post_to(messij, room_ref)
+
   end
 
   defp handle :disconnect, data, _socket do
@@ -151,11 +153,12 @@ defmodule Echo do
     Logger.info("chat '#{message}' from #{client_name} in #{room_ref}")
     # send to all the clients in that room
 
-    """
+    messij = """
     CHAT:#{room_ref}
     CLIENT_NAME:#{client_name}
-    MESSAGE:#{message}\n\n
-    """ |> post_to(room_ref)
+    MESSAGE:#{message}\n
+    """
+    post_to(messij, room_ref)
   end
 
   defp handle :noidea, data, _socket do
