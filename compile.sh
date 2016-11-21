@@ -1,0 +1,2 @@
+mix clean
+mix compile

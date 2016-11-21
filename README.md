@@ -1,3 +1,24 @@
-# Lab 2: Skeleton Multithreaded Server
+# Echo
 
-~~node.js~~ elixir implementation. Thread pool pattern to limit the number of possible clients is emulated by a counter. Unless the counter is less than the max, new clients are load-shedded and ignored until the rest of the clients have disconnected.
+**TODO: Add description**
+
+## Installation
+
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+
+  1. Add `echo` to your list of dependencies in `mix.exs`:
+
+    ```elixir
+    def deps do
+      [{:echo, "~> 0.1.0"}]
+    end
+    ```
+
+  2. Ensure `echo` is started before your application:
+
+    ```elixir
+    def application do
+      [applications: [:echo]]
+    end
+    ```
+
