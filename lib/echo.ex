@@ -23,6 +23,10 @@ defmodule Echo do
     children = [
       supervisor(Task.Supervisor, [[name: Echo.TaskSupervisor]]),
       worker(Task, [Echo, :accept, [@port]]),
+
+      # to be included in 1.4
+      # http://elixir-lang.org/docs/master/elixir/Registry.html
+      supervisor(Registry, [:duplicate, Echo.Rooms, [partitions: System.schedulers_online]])
     ]
 
     opts = [strategy: :one_for_one, name: Echo.Supervisor]
