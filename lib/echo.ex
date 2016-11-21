@@ -165,8 +165,8 @@ defmodule Echo do
                           |> Enum.join("")
                           |> String.lstrip end)
       |> List.to_tuple
-    Logger.info("Parsed this: #{Enum.join(Tuple.to_list(command))}")
-    command
+    Logger.info "Parsed this:"
+    IO.inspect command
   end
 
   defp write_to data, socket do
