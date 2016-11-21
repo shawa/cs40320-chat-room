@@ -169,7 +169,7 @@ defmodule Echo do
                           |> Enum.join("")
                           |> String.lstrip end)
       |> List.to_tuple
-    Logger.info(Enum.join(Tuple.to_list(command)))
+    Logger.info("Parsed this: #{Enum.join(Tuple.to_list(command))}")
     command
   end
 
