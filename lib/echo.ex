@@ -72,6 +72,8 @@ defmodule Echo do
 
   defp handle_message data, socket do
     action = case data do
+        "HELO "          <> _ -> :helo
+        "KILL_SERVICE\n"      -> :guillotine
         "JOIN_CHATROOM"  <> _ -> :join
         "LEAVE_CHATROOM" <> _ -> :leave
         "DISCONNECT"     <> _ -> :disconnect
@@ -103,6 +105,20 @@ defmodule Echo do
     """
     #{client_name} joined ##{room_name}
     """ |> post_to(room_ref)
+  end
+
+  defp handle :guillotine, data, socket do
+    Logger.info "Killing service"
+    System.halt(0)
+  end
+
+  defp handle :helo, data, socket do
+    """
+    HELO #{text}
+    IP:#{@ip}
+    Port:#{@port}
+    StudentID:#{@id}
+    """ |> write_to(socket)
   end
 
   defp handle :leave, data, socket do
