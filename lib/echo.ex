@@ -84,10 +84,11 @@ defmodule Echo do
 
   defp handle :join, data, socket do
     {room_name, _, _, client_name, _} = values(data)
+
     Logger.info("join from #{client_name} to #{room_name}")
 
-    room_ref = 1
-    join_id = 20
+    room_ref = ref room_name
+    join_id = ref room_name, client_name
 
     {:ok, _} = Registry.register(Echo.Rooms, room_ref, {client_name, join_id, socket})
 
@@ -95,12 +96,12 @@ defmodule Echo do
     JOINED_CHATROOM: #{room_name}
     SERVER_IP: #{@ip}
     PORT: #{0}
-    ROOM_REF: <<ROOM_REF>>
-    JOIN_ID: <<JOIN_ID>>
+    ROOM_REF: #{room_ref}
+    JOIN_ID: #{join_id}
     """ |> write_to(socket)
 
     """
-    #{client_name} joined ##{room_named}
+    #{client_name} joined ##{room_name}
     """ |> post_to(room_ref)
   end
 
@@ -111,10 +112,9 @@ defmodule Echo do
     # TODO: remove a client from this list
     # take the client id and drop it from the keys()
 
-
     """
-    LEFT_CHATROOM: <<ROOM_REF>>
-    JOIN_ID: <<integer previously provided by server on join>>
+    LEFT_CHATROOM: #{room_ref}
+    JOIN_ID: #{join_id}
     """ |> write_to(socket)
   end
 
@@ -127,6 +127,12 @@ defmodule Echo do
     {room_ref, join_id, client_name, message} = values(data)
     Logger.info("chat '#{message}' from #{client_name} in #{room_ref}")
     # send to all the clients in that room
+
+    """
+    CHAT: #{room_ref}
+    CLIENT_NAME: #{client_name}
+    MESSAGE: #{message}\n\n
+    """ |> post_to(room_ref)
   end
 
   defp handle :noidea, data, socket do
@@ -151,8 +157,16 @@ defmodule Echo do
   end
 
   defp post_to message, room_ref do
-  Registry.dispatch(Registry.PubSubTest, room_ref, fn entries ->
-    for {_, {_, _, sock}} <- entries, do: write_to(message, sock)
-  end)
+    Registry.dispatch(Echo.Rooms, room_ref, fn entries -> for {_, {_, _, sock}} <- entries, do: write_to(message, sock) end)
+
+  end
+
+  defp ref room do
+    11
+  end
+
+  defp ref room, client_name do
+    1515
+  end
 
 end
