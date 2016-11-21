@@ -8,10 +8,10 @@ defmodule Echo do
 
 
   @tcp_options [
-    :binary,          # recieve binaries
-    packet: :line,    # line-by-line chunking
-    active: false,    # blocks on :gen_tcp:recv/2 until we get data
-    reuseaddr: true   # reuse address if listener has a crash
+    :binary,        # recieve binaries
+    packet: :raw,   # don't want line-by-line anymore
+    active: false,  # blocks on :gen_tcp:recv/2 until we get data
+    reuseaddr: true # reuse address if listener has a crash
   ]
 
   @doc false
@@ -21,14 +21,13 @@ defmodule Echo do
     Logger.debug "Using port #{@port} from config"
 
     children = [
-      supervisor(Task.Supervisor, [[Name: Echo.TaskSupervisor]]),
+      supervisor(Task.Supervisor, [[name: Echo.TaskSupervisor]]),
       worker(Task, [Echo, :accept, [@port]]),
     ]
 
-    opts = [strategy: :one_for_one, name: Echo.TaskSupervisor]
-
-
+    opts = [strategy: :one_for_one, name: Echo.Supervisor]
     Supervisor.start_link children, opts
+
   end
 
   def accept port do
@@ -47,39 +46,26 @@ defmodule Echo do
 
   defp loop_acceptor socket do
     {:ok, client} = :gen_tcp.accept socket
-    serve client
+    {:ok, pid} = Task.Supervisor.start_child(Echo.TaskSupervisor, fn -> serve(client) end)
+    :ok = :gen_tcp.controlling_process client, pid
     loop_acceptor socket
   end
 
   defp serve socket do
-    read_line(socket)
-    |> handle
-    |> write_line(socket)
-    serve socket
+      case :gen_tcp.recv(socket, 0) do
+       {:ok, data} -> handle(data, socket)
+                      serve socket
+
+        _          -> Logger.info "client hung up"
+                      {:error, :clientClosed}
+       end
   end
 
-  defp read_line socket do
-    {:ok, data} = :gen_tcp.recv socket, 0
-    data
+  defp handle data, socket do
+    write_line(data, socket)
   end
 
   defp write_line line, socket do
     :gen_tcp.send socket, line
-  end
-
-
-  defp handle "KILL_SERVICE\n" do
-    Logger.info "Gotta die"
-    System.halt(0)
-  end
-
-  defp handle "HELO " <> text do
-    Logger.info "Got a HELO"
-    ~s(HELO #{text}IP:#{@ip}\nPort:#{@port}\nStudentID:#{@id}\n)
-  end
-
-  defp handle data do
-    Logger.info "Got unknown message: " <> data
-    data
   end
 end
