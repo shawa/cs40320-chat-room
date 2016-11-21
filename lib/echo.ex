@@ -83,24 +83,28 @@ defmodule Echo do
   end
 
   defp handle :leave, data, socket do
-    Logger.info(data)
+    {room_ref, join_id, client_name} = values(data)
+    Logger.info("leave from #{client_name} of ${room_ref}, with join id #{join_id}")
   end
 
   defp handle :disconnect, data, socket do
-    Logger.info(data)
+    {0, 0, client_name} = values(data)
+    Logger.info("disconnect from #{client_name}")
   end
 
   defp handle :chat, data, socket do
-    Logger.info(data)
+    {room_ref, join_id, client_name, message} = values(data)
+    Logger.info("chat '#{message}' from #{client_name} in #{room_ref}")
   end
 
   defp handle :noidea, data, socket do
-    Logger.info(data)
+    Logger.info("well, I don't know what to do with this:\n#{data}")
   end
 
   defp values data do
     command = data
       |> String.split("\n")
+      |> Enum.drop(-1)
       |> Enum.map(fn(x) -> String.split(x, ":")
                           |> tl
                           |> Enum.join("")
