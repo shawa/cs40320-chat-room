@@ -135,10 +135,10 @@ defmodule Echo do
     MESSAGE:#{client_name} left the room\n
     """ |> post_to(room_ref)
 
-    """
-    LEFT_CHATROOM:#{room_ref}
-    JOIN_ID:#{join_id}
-    """ |> write_to(socket)
+  #   """
+  #   LEFT_CHATROOM:#{room_ref}
+  #   JOIN_ID:#{join_id}
+  #   """ |> write_to(socket)
   end
 
   defp handle :disconnect, data, _socket do
