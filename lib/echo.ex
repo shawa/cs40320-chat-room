@@ -47,7 +47,12 @@ defmodule Echo do
   defp loop_acceptor socket do
     {:ok, client} = :gen_tcp.accept socket
     {:ok, pid} = Task.Supervisor.start_child(Echo.TaskSupervisor, fn -> serve(client) end)
-    :ok = :gen_tcp.controlling_process client, pid
+
+    case :gen_tcp.controlling_process client, pid do
+      {:error, error} -> Logger.info error #TODO figure out this error
+      :ok -> :ok
+    end
+
     loop_acceptor socket
   end
 
@@ -57,12 +62,15 @@ defmodule Echo do
                       serve socket
 
         _          -> Logger.info "client hung up"
-                      {:error, :clientClosed}
        end
   end
 
   defp handle data, socket do
-    write_line(data, socket)
+    command = data
+      |> String.split("\n")
+      |> Enum.map(fn(x) -> String.split(x, ":") end)
+
+    Logger.info(command)
   end
 
   defp write_line line, socket do
