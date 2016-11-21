@@ -58,7 +58,7 @@ defmodule Echo do
 
   defp serve socket do
       case :gen_tcp.recv(socket, 0) do
-       {:ok, data}       -> handle(data, socket)
+       {:ok, data}       -> handle_message(data, socket)
                             serve socket
 
        {:error, :closed} -> Logger.info "client hung up"
@@ -66,9 +66,36 @@ defmodule Echo do
        end
   end
 
+  defp handle_message data, socket do
+    action = case data do
+        "JOIN_CHATROOM"  <> _ -> :join
+        "LEAVE_CHATROOM" <> _ -> :leave
+        "DISCONNECT"     <> _ -> :disconnect
+        "CHAT"           <> _ -> :chat
+                            _ -> :noidea
+    end
+    handle(action, data, socket)
+  end
 
-  defp handle data, socket do
-    vals = values(data)
+  defp handle :join, data, socket do
+    {room_name, _, _, client_name, _} = values(data)
+    Logger.info("join from #{client_name} to #{room_name}")
+  end
+
+  defp handle :leave, data, socket do
+    Logger.info(data)
+  end
+
+  defp handle :disconnect, data, socket do
+    Logger.info(data)
+  end
+
+  defp handle :chat, data, socket do
+    Logger.info(data)
+  end
+
+  defp handle :noidea, data, socket do
+    Logger.info(data)
   end
 
   defp values data do
@@ -80,9 +107,11 @@ defmodule Echo do
                           |> String.lstrip end)
       |> List.to_tuple
     Logger.info(Enum.join(Tuple.to_list(command)))
+    command
   end
 
   defp write_line line, socket do
     :gen_tcp.send socket, line
   end
+
 end
