@@ -103,7 +103,9 @@ defmodule Echo do
     """ |> write_to(socket)
 
     """
-    #{client_name} joined ##{room_name}
+    CHAT:#{client_name}
+    CLIENT_NAME:#{client_name}
+    MESSAGE:#{client_name} joined ##{room_name}
     """ |> post_to(room_ref)
   end
 
