@@ -128,8 +128,8 @@ defmodule Echo do
     # take the client id and drop it from the keys()
 
     """
-    LEFT_CHATROOM: #{room_ref}
-    JOIN_ID: #{join_id}
+    LEFT_CHATROOM:#{room_ref}
+    JOIN_ID:#{join_id}
     """ |> write_to(socket)
   end
 
@@ -144,9 +144,9 @@ defmodule Echo do
     # send to all the clients in that room
 
     """
-    CHAT: #{room_ref}
-    CLIENT_NAME: #{client_name}
-    MESSAGE: #{message}\n\n
+    CHAT:#{room_ref}
+    CLIENT_NAME:#{client_name}
+    MESSAGE:#{message}\n\n
     """ |> post_to(room_ref)
   end
 
