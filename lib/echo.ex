@@ -175,7 +175,7 @@ defmodule Echo do
 
   defp write_to data, socket do
     Logger.info("Sending this:\n#{data}")
-    :gen_tcp.send socket, line
+    :gen_tcp.send socket, data
   end
 
   defp post_to message, room_ref do
