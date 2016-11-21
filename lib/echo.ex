@@ -173,7 +173,7 @@ defmodule Echo do
     command
   end
 
-  defp write_to line, socket do
+  defp write_to data, socket do
     Logger.info("Sending this:\n#{data}")
     :gen_tcp.send socket, line
   end
