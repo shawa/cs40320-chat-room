@@ -10,4 +10,4 @@ export SK_IP_ADDRESS=$(ifconfig en0 inet \
                      | head -n 1 \
                      | tr -d '\n')
 mix clean
-mix run --no-halt
+iex -S mix

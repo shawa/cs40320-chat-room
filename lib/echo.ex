@@ -86,7 +86,10 @@ defmodule Echo do
     {room_name, _, _, client_name, _} = values(data)
     Logger.info("join from #{client_name} to #{room_name}")
 
-    # add the client to the room
+    room_ref = 1
+    join_id = 20
+
+    {:ok, _} = Registry.register(Echo.Rooms, room_ref, {client_name, join_id, socket})
 
     """
     JOINED_CHATROOM: #{room_name}
@@ -94,17 +97,25 @@ defmodule Echo do
     PORT: #{0}
     ROOM_REF: <<ROOM_REF>>
     JOIN_ID: <<JOIN_ID>>
-    """ |> write_line(socket)
+    """ |> write_to(socket)
+
+    """
+    #{client_name} joined ##{room_named}
+    """ |> post_to(room_ref)
   end
 
   defp handle :leave, data, socket do
     {room_ref, join_id, client_name} = values(data)
     Logger.info("leave from #{client_name} of ${room_ref}, with join id #{join_id}")
 
+    # TODO: remove a client from this list
+    # take the client id and drop it from the keys()
+
+
     """
     LEFT_CHATROOM: <<ROOM_REF>>
     JOIN_ID: <<integer previously provided by server on join>>
-    """ |> write_line(socket)
+    """ |> write_to(socket)
   end
 
   defp handle :disconnect, data, socket do
@@ -135,7 +146,13 @@ defmodule Echo do
     command
   end
 
-  defp write_line line, socket do
+  defp write_to line, socket do
     :gen_tcp.send socket, line
   end
+
+  defp post_to message, room_ref do
+  Registry.dispatch(Registry.PubSubTest, room_ref, fn entries ->
+    for {_, {_, _, sock}} <- entries, do: write_to(message, sock)
+  end)
+
 end
