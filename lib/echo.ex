@@ -133,13 +133,13 @@ defmodule Echo do
     """ |> write_to(socket)
   end
 
-  defp handle :disconnect, data, socket do
+  defp handle :disconnect, data, _socket do
     {0, 0, client_name} = values(data)
     Logger.info("disconnect from #{client_name}")
   end
 
-  defp handle :chat, data, socket do
-    {room_ref, join_id, client_name, message} = values(data)
+  defp handle :chat, data, _socket do
+    {room_ref, _join_id, client_name, message} = values(data)
     Logger.info("chat '#{message}' from #{client_name} in #{room_ref}")
     # send to all the clients in that room
 
@@ -176,11 +176,11 @@ defmodule Echo do
 
   end
 
-  defp ref room do
+  defp ref _room do
     11
   end
 
-  defp ref room, client_name do
+  defp ref _room, _client_name do
     1515
   end
 
