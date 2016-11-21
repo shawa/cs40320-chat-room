@@ -178,12 +178,15 @@ defmodule Echo do
 
   end
 
-  defp ref _room do
-    11
+  defp ref a do
+    {refnumber, _} = :crypto.hash(:sha, a)
+      |> Base.encode16
+      |> Integer.parse(16)
+
+    refnumber
   end
 
-  defp ref _room, _client_name do
-    1515
+  defp ref a, b do
+    ref a<>b
   end
-
 end
