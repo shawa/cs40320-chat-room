@@ -1,0 +1,5 @@
+JOIN_CHATROOM: wrewr
+CLIENT_IP: adsa
+PORT: dfsf
+CLIENT_NAME: atse
+
