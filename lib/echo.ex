@@ -77,14 +77,30 @@ defmodule Echo do
     handle(action, data, socket)
   end
 
+
   defp handle :join, data, socket do
     {room_name, _, _, client_name, _} = values(data)
     Logger.info("join from #{client_name} to #{room_name}")
+
+    # add the client to the room
+
+    """
+    JOINED_CHATROOM: #{room_name}
+    SERVER_IP: #{@ip}
+    PORT: #{0}
+    ROOM_REF: <<ROOM_REF>>
+    JOIN_ID: <<JOIN_ID>>
+    """ |> write_line(socket)
   end
 
   defp handle :leave, data, socket do
     {room_ref, join_id, client_name} = values(data)
     Logger.info("leave from #{client_name} of ${room_ref}, with join id #{join_id}")
+
+    """
+    LEFT_CHATROOM: <<ROOM_REF>>
+    JOIN_ID: <<integer previously provided by server on join>>
+    """ |> write_line(socket)
   end
 
   defp handle :disconnect, data, socket do
@@ -95,6 +111,7 @@ defmodule Echo do
   defp handle :chat, data, socket do
     {room_ref, join_id, client_name, message} = values(data)
     Logger.info("chat '#{message}' from #{client_name} in #{room_ref}")
+    # send to all the clients in that room
   end
 
   defp handle :noidea, data, socket do
@@ -117,5 +134,4 @@ defmodule Echo do
   defp write_line line, socket do
     :gen_tcp.send socket, line
   end
-
 end
