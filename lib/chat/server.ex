@@ -17,7 +17,9 @@ defmodule Chat.Server do
   defp via_tuple(room_name) do
     {:via, Chat.Registry, {:chat_room, room_name}}
   end
+
   # SERVER
+
   def init(messages) do
     {:ok, messages}
   end
