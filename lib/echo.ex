@@ -25,7 +25,7 @@ defmodule Echo do
       worker(Task, [Echo, :accept, [@port]]),
 
       # to be included in 1.4
-      # http://elixir-lang.org/docs/master/elixir/Registry.html
+
       supervisor(Registry, [:duplicate, Echo.Rooms, [partitions: System.schedulers_online]])
     ]
 
@@ -191,6 +191,8 @@ defmodule Echo do
     Registry.dispatch(Echo.Rooms, room_ref, fn entries -> for {_, {_, _, sock}} <- entries, do: write_to(message, sock) end)
 
   end
+
+  defp leave_room client_id, room_ref
 
   defp ref a do
     {refnumber, _} = :crypto.hash(:sha, a)
