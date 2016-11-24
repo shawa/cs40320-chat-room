@@ -1,2 +1,0 @@
-mix clean
-mix compile
