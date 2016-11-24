@@ -3,7 +3,7 @@ defmodule Chat.Server do
 
   # API
   def start_link(name) do
-    GenServer.start_link(__MODULE__, [], name: via_tuple(name)
+    GenServer.start_link(__MODULE__, [], name: via_tuple(name))
   end
 
   def add_message(room_name, message) do
