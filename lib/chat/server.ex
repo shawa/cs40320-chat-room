@@ -3,15 +3,15 @@ defmodule Chat.Server do
 
   # API
   def start_link do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, [], name: :chat_room)
   end
 
-  def add_message(pid, message) do
-    GenServer.cast(pid, {:add_message, message})
+  def add_message(message) do
+    GenServer.cast(:chat_room, {:add_message, message})
   end
 
-  def get_messages(pid) do
-    GenServer.call(pid, :get_messages)
+  def get_messages do
+    GenServer.call(:chat_room, :get_messages)
   end
 
   # SERVER
