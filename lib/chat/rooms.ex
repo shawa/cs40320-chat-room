@@ -1,4 +1,4 @@
-defmodule Chat.Server do
+defmodule Chat.Rooms do
   require Logger
   use GenServer
 
