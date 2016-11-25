@@ -1,0 +1,9 @@
+* Protocol
+** Chatroom
+*** TODO Join
+*** TODO Leave
+*** TODO Broadcast Message
+** Connection
+*** TODO HELO
+*** TODO KILL_SERVICE
+*** TODO Disconnect
