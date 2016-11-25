@@ -11,18 +11,17 @@ defmodule Chat.Rooms do
     GenServer.cast(via_tuple(room_name), {:add_message, message})
   end
 
-  def add_member(client_name, room_name) do
-    GenServer.call(via_tuple(room_name), {:add_member, client_name})
+  def add_member({name, socket}, room_name) do
+    GenServer.call(via_tuple(room_name), {:add_member, {name, socket}})
+  end
+
+  def drop_member({join_id, name}, room_name) do
+    GenServer.cast(via_tuple(room_name), {:drop_member, {join_id, name}})
   end
 
   def get_members(room_name) do
     GenServer.call(via_tuple(room_name), :get_members)
   end
-
-  def drop_member(client_name, room_name) do
-    GenServer.cast(via_tuple(room_name), {:drop_member, client_name})
-  end
-
 
   defp via_tuple(room_name) do
     {:via, :gproc, {:n, :l, {:chat_room, room_name}}}
@@ -39,12 +38,16 @@ defmodule Chat.Rooms do
     {:noreply, state}
   end
 
-  def handle_cast({:drop_member, member_to_drop}, members) do
-    {:noreply, List.delete(members, member_to_drop)}
+  def handle_cast({:drop_member, {join_id, name}}, members) do
+    Logger.info "Trying to drop #{name}, with id #{join_id}"
+    new_members = Enum.filter(members, fn x -> !match?({join_id, name, _}, x) end)
+    {:noreply, new_members}
   end
 
   def handle_call({:add_member, new_member}, _from,  members) do
-    join_id = :erlang.unique_integer
+    {name, socket} = new_member
+    join_id    = :erlang.unique_integer
+    new_member = {join_id, name, socket}
     {:reply, {:ok, join_id}, [new_member | members]}
   end
 
