@@ -7,3 +7,14 @@
 *** TODO HELO
 *** TODO KILL_SERVICE
 *** TODO Disconnect
+** TCP Interface
+*** TODO Message Parsing and Dispatch
+
+#+BEGIN_SRC Elixir
+Chat.Supervisor.start_link
+Chat.Registry.start_link
+Chat.Supervisor.start_room(room_name)
+Chat.Supervisor.add_member(room_name)
+Chat.Supervisor.add_message(room_name)
+
+#+END_SRC
