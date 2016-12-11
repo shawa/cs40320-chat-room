@@ -30,13 +30,20 @@ defmodule Chat.Rooms do
 
   # SERVER
 
-  def init(state) do
+  def init(_) do
+
+    state = %{:name => "TEST_NAME",
+              :room_ref => :erlang.unique_integer,
+              :members => []}
     {:ok, state}
   end
 
   def handle_cast({:add_message, message}, state) do
     Logger.info "Broadcasting #{message}"
-    state[:members] |> Enum.map(fn(x) -> elem(x, 2) |> :gen_tcp.send(message) end)
+
+    socks = state[:members] |> Enum.map(fn(member) -> elem(member, 2) end)
+                            |> Enum.map(fn(sock) -> :gen_tcp.send(sock, message) end)
+
     {:noreply, state}
   end
 
@@ -45,7 +52,7 @@ defmodule Chat.Rooms do
 
     new_members = Enum.filter(state[:members],
                               fn x -> !match?({join_id, name, _}, x) end)
-    new_state = %{state | :members => new_memvers}
+    new_state = %{state | :members => new_members}
 
     {:noreply, new_members}
   end
