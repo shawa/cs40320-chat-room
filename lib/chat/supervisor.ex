@@ -8,11 +8,14 @@ defmodule Chat.Supervisor do
   end
 
   def start_room(name) do
-    Supervisor.start_child(:chat_supervisor, [name])
+    state = %{:name => name,
+              :room_ref => :erlang.unique_integer,
+              :members => []}
+    Supervisor.start_child(:chat_supervisor, state)
   end
 
   def get_room(name) do
-    case :gproc.where({:n, :l, {:chat_room, name}}) do
+    case :gproc.where({:n, :l, {:chat_room, state}}) do
       :undefined -> {:error, :does_not_exist}
       pid        -> {:ok, pid}
     end
