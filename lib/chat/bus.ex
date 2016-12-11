@@ -28,9 +28,11 @@ defmodule Chat.Bus do
   end
 
   defp loop_acceptor socket do
+    Logger.info "accepting new client socket"
     {:ok, client} = :gen_tcp.accept socket
+
+    Logger.info "handing off to new child"
     {:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)
-    Logger.info "{:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)"
 
     case :gen_tcp.controlling_process client, pid do
       {:error, error} -> Logger.info error #TODO figure out this error
