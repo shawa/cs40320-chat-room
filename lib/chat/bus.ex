@@ -29,7 +29,6 @@ defmodule Chat.Bus do
 
   defp loop_acceptor socket do
     {:ok, client} = :gen_tcp.accept socket
-    Logger.info "{:ok, client} = :gen_tcp.accept socket"
     {:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)
     Logger.info "{:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)"
 

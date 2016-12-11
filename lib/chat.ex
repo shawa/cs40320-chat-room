@@ -7,7 +7,8 @@ defmodule Chat do
 
     children = [
       worker(Task, [Chat.Bus, :init, []], restart: :temporary),
-      worker(Chat.Rooms, ["room"])
+      worker(Chat.Rooms, ["room"]),
+      supervisor(Task.Supervisor, [[name: Chat.TaskSupervisor]])
     ]
     
     opts = [strategy: :one_for_one, name: Chat.Supervisor]
