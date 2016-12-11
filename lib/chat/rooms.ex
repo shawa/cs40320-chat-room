@@ -24,6 +24,10 @@ defmodule Chat.Rooms do
     GenServer.cast(via_tuple(room_name), {:drop_member, {join_id, name}})
   end
 
+  def get_ref(room_name) do
+    GenServer.call(via_tuple(room_name), {:get_name})
+  end
+
   defp via_tuple(room_name) do
     {:via, :gproc, {:n, :l, {:chat_room, room_name}}}
   end
@@ -31,9 +35,7 @@ defmodule Chat.Rooms do
   # SERVER
 
   def init(_) do
-
-    state = %{:name => "TEST_NAME",
-              :room_ref => :erlang.unique_integer,
+    state = %{:room_ref => :erlang.unique_integer,
               :members => []}
     {:ok, state}
   end
@@ -64,5 +66,9 @@ defmodule Chat.Rooms do
     
     new_state = %{state | :members => [new_member | state[:members]]}
     {:reply, {:ok, join_id}, new_state}
+  end
+
+  def handle_call({:get_name}, _from, state) do
+    {:reply, {:ok, state[:room_ref]}, state}
   end
 end
