@@ -13,7 +13,7 @@ defmodule Chat.Bus do
   ]
 
   @doc false
-  def init(_) do
+  def init() do
     Logger.debug "Using port #{@port} from config"
     accept @port
   end
@@ -29,7 +29,9 @@ defmodule Chat.Bus do
 
   defp loop_acceptor socket do
     {:ok, client} = :gen_tcp.accept socket
-    {:ok, pid} = Task.Supervisor.start_child(Echo.TaskSupervisor, fn -> serve(client) end)
+    Logger.info "{:ok, client} = :gen_tcp.accept socket"
+    {:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)
+    Logger.info "{:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)"
 
     case :gen_tcp.controlling_process client, pid do
       {:error, error} -> Logger.info error #TODO figure out this error

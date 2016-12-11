@@ -4,10 +4,15 @@ defmodule Chat do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-    children = [Chat.Bus, []]
-    opts = [strategy: :one_for_one, name: Echo.Supervisor]
+
+    children = [
+      worker(Task, [Chat.Bus, :init, []], restart: :temporary),
+      worker(Chat.Rooms, ["room"])
+    ]
+    
+    opts = [strategy: :one_for_one, name: Chat.Supervisor]
+
     Supervisor.start_link(children, opts)
-    Logger.info "going"
   end
 
 end
