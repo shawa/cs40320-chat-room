@@ -4,7 +4,6 @@ defmodule Chat.Bus do
 
   @port 5000
 
-
   @tcp_options [
     :binary,        # recieve binaries
     packet: :raw,   # don't want line-by-line anymore
@@ -15,10 +14,10 @@ defmodule Chat.Bus do
   @doc false
   def init() do
     Logger.debug "Using port #{@port} from config"
-    accept @port
+    accept
   end
 
-  def accept port do
+  def accept port \\ @port do
     case :gen_tcp.listen(port, @tcp_options) do
       {:ok, socket}         -> Logger.info "Accepting connections on port #{port}"
                                loop_acceptor socket
@@ -28,11 +27,11 @@ defmodule Chat.Bus do
   end
 
   defp loop_acceptor socket do
-    Logger.info "accepting new client socket"
     {:ok, client} = :gen_tcp.accept socket
+    Logger.info "accepting new client socket"
 
-    Logger.info "handing off to new child"
     {:ok, pid} = Task.Supervisor.start_child(Chat.TaskSupervisor, fn -> serve(client) end)
+    Logger.info "handed off to new child"
 
     case :gen_tcp.controlling_process client, pid do
       {:error, error} -> Logger.info error #TODO figure out this error
