@@ -71,10 +71,19 @@ defmodule Chat.Bus do
       "PORT" => "0",
       "CLIENT_NAME" => client_name} = message
 
-    Logger.info Message.from_list([{"n", room_name}, {"c", client_name}])
 
-    Chat.Rooms.add_member({client_name, socket}, room_name)
+    {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
+
+    response = Message.from_list([
+      {"JOINED_CHATROOM", ""},
+      {"SERVER_IP", ""},
+      {"PORT", ""},
+      {"ROOM_REF", ""},
+      {"JOIN_ID", ""},
+    ])
+    Logger.info response
   end
+
 
 
   defp handle kind, data, _ do

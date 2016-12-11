@@ -41,7 +41,6 @@ defmodule Chat.Rooms do
   def handle_cast({:add_message, message}, members) do
     Logger.info "Broadcasting #{message}"
     members |> Enum.map(fn({_,_, sock}) -> :gen_tcp.send(sock, message) end)
-
     {:noreply, members}
   end
 
