@@ -12,6 +12,11 @@ defmodule Chat.Rooms do
   end
 
   def add_member({name, socket}, room_name) do
+    case Chat.Supervisor.get_room(room_name) do
+      {:error, :does_not_exist} -> Chat.Supervisor.start_room(room_name)
+      {:ok, pid}                -> :ok
+    end
+
     GenServer.call(via_tuple(room_name), {:add_member, {name, socket}})
   end
 

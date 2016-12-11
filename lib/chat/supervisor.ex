@@ -11,6 +11,13 @@ defmodule Chat.Supervisor do
     Supervisor.start_child(:chat_supervisor, [name])
   end
 
+  def get_room(name) do
+    case :gproc.where({:n, :l, {:chat_room, name}}) do
+      :undefined -> {:error, :does_not_exist}
+      pid        -> {:ok, pid}
+    end
+  end
+
   def init(_) do
     children = [
       worker(Chat.Rooms, []),
