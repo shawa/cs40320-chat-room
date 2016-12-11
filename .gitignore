@@ -20,3 +20,6 @@ mix.lock
 
 # emacs tempfiles
 **/.#
+
+# random test files for netcat
+**/*.txt

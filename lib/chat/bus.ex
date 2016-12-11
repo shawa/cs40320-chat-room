@@ -58,13 +58,22 @@ defmodule Chat.Bus do
         "CHAT"           <> _ -> :chat
                             _ -> :noidea
     end
-    handle(action, data, socket)
+
+    fields = Message.to_hash(data)
+    handle(action, fields, socket)
   end
 
-  defp handle :join, data, _ do
+  defp handle :join, message, socket do
     Logger.info "have to handle join"
-    name = "hello"
-    Chat.Supervisor.start_room(name)
+
+    %{"JOIN_CHATROOM" => room_name,
+      "CLIENT_IP" => "0",
+      "PORT" => "0",
+      "CLIENT_NAME" => client_name} = message
+
+    Logger.info Message.from_list([{"n", room_name}, {"c", client_name}])
+
+    Chat.Rooms.add_member({client_name, socket}, room_name)
   end
 
 

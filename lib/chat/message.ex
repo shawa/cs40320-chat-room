@@ -1,6 +1,7 @@
 defmodule Message do
   def to_hash data do
     data |> String.split("\n")
+         |> Enum.drop(-1)
          |> Enum.map(fn(x) -> split_strip(x) end)
          |> Enum.into(%{})
   end
