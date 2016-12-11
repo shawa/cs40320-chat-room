@@ -11,8 +11,11 @@ defmodule Chat.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :gproc]]
+    [applications: [:logger, :gproc],
+    mod: {:Chat, []}]
   end
+
+
 
   defp deps do
     [{:gproc, "0.3.1"}]
