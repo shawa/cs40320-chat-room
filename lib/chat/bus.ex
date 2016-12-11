@@ -61,6 +61,13 @@ defmodule Chat.Bus do
     handle(action, data, socket)
   end
 
+  defp handle :join, data, _ do
+    Logger.info "have to handle join"
+    name = "hello"
+    Chat.Supervisor.start_room(name)
+  end
+
+
   defp handle kind, data, _ do
     Logger.info "have to handle #{kind}"
   end

@@ -1,5 +1,7 @@
 defmodule Chat.Supervisor do
+  require Logger
   use Supervisor
+
 
   def start_link do
     Supervisor.start_link(__MODULE__, [], name: :chat_supervisor)
@@ -14,6 +16,7 @@ defmodule Chat.Supervisor do
       worker(Chat.Rooms, []),
     ]
 
+    Logger.info "Chat Supervisor started"
     supervise(children, strategy: :simple_one_for_one)
   end
 end
