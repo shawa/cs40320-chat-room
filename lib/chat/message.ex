@@ -2,7 +2,6 @@ defmodule Message do
   require Logger
   def to_hash data do
     data |> String.split("\n")
-         |> Enum.drop(-1)
          |> Enum.map(fn(x) -> split_strip(x) end)
          |> Enum.filter(fn(x) -> x != :empty end)
          |> Enum.into(%{})
@@ -48,8 +47,15 @@ defmodule Message do
       "CLIENT_NAME" => client_name,
       "JOIN_ID" => join_id,
       "MESSAGE" => chat_message} = to_hash(data)
-    Logger.info chat_message
 
+    IO.inspect [room_ref, client_name, join_id, chat_message]
+
+    room_message = Message.from_list([
+      {"CHAT", "#{room_ref}"},
+      {"CLIENT_NAME", client_name},
+      {"MESSAGE", "#{chat_message}\n\n"},
+    ])
+    Chat.Rooms.add_message(room_message, room_ref)
   end
 
   def handle kind, data, _ do
