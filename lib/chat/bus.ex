@@ -3,6 +3,7 @@ defmodule Chat.Bus do
   require Logger
 
   @port 5000
+  @ip "999.999.999.999"
 
   @tcp_options [
     :binary,        # recieve binaries
@@ -75,8 +76,8 @@ defmodule Chat.Bus do
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
 
     response = Message.from_list([
-      {"JOINED_CHATROOM", ""},
-      {"SERVER_IP", ""},
+      {"JOINED_CHATROOM", room_name},
+      {"SERVER_IP", @ip},
       {"PORT", ""},
       {"ROOM_REF", ""},
       {"JOIN_ID", ""},
