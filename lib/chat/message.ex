@@ -1,4 +1,4 @@
-defmodule Message do
+defmodule Chat.Message do
   require Logger
   def to_hash data do
     data |> String.split("\n")
@@ -30,7 +30,7 @@ defmodule Message do
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
     {:ok, room_ref} = Chat.Supervisor.get_room(room_name)
 
-    response = Message.from_list([
+    response = from_list([
       {"JOINED_CHATROOM", room_name},
       {"SERVER_IP", @ip},
       {"PORT", "WHAT IS THE PORT"},
@@ -48,7 +48,7 @@ defmodule Message do
       "JOIN_ID" => join_id,
       "MESSAGE" => chat_message} = to_hash(data)
 
-    room_message = Message.from_list([
+    room_message = from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
       {"MESSAGE", "#{chat_message}\n\n"},
@@ -57,24 +57,21 @@ defmodule Message do
     Chat.Rooms.add_message(room_message, room_ref)
   end
 
-  def handle kind, data, _ do
-    Logger.info "have to handle #{kind}"
-  end
 
   def handle :leave, data, socket do
     %{"LEAVE_CHATROOM" => room_ref,
       "JOIN_ID" => join_id,
       "CLIENT_NAME" => client_name} = to_hash(data)
 
-    response = Message.from_list([
+    response = from_list([
       {"LEFT_CHATROOM", "#{room_ref}"},
-      {"JOIN_ID", "#{join_id}"},
+      {"JOIN_ID", "#{join_id}"}
     ])
     :gen_tcp.send(socket, response)
 
     Chat.Rooms.drop_member({join_id, client_name}, room_ref)
 
-    Message.from_list([
+    from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
       {"MESSAGE", "#{client_name} has left the room\n\n"},
@@ -85,7 +82,12 @@ defmodule Message do
     %{"DISCONNECT" => room_ref,
       "PORT" => "0",
       "CLIENT_NAME" => client_name} = to_hash(data)
-
     :gen_tcp.close(socket)
   end
+
+  def handle kind, data, _ do
+    Logger.info "have to handle #{kind}"
+  end
+
 end
+

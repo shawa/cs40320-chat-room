@@ -52,14 +52,19 @@ defmodule Chat.Bus do
   end
 
   defp handle_message data, socket do
-    action = case data do
-        "JOIN_CHATROOM"  <> _ -> :join
-        "LEAVE_CHATROOM" <> _ -> :leave
-        "DISCONNECT"     <> _ -> :disconnect
-        "CHAT"           <> _ -> :chat
-                            _ -> :noidea
+    {type, action} = case data do
+      "KILL_SERVICE"   <> _ -> {:control, :kill_self}
+      "HELO"           <> _ -> {:control, :helo_reply}
+      "JOIN_CHATROOM"  <> _ -> {:chat, :join}
+      "LEAVE_CHATROOM" <> _ -> {:chat, :leave}
+      "DISCONNECT"     <> _ -> {:chat, :disconnect}
+      "CHAT"           <> _ -> {:chat, :chat}
+                          _ -> {:chat, :noidea}
     end
-    Message.handle(action, data, socket)
-  end
 
+   case type do
+    :chat    -> Chat.Message.handle(action, data, socket)
+    :control -> Chat.Control.handle(action, data, socket)
+    end
+  end
 end
