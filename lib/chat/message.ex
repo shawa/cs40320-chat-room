@@ -48,13 +48,12 @@ defmodule Message do
       "JOIN_ID" => join_id,
       "MESSAGE" => chat_message} = to_hash(data)
 
-    IO.inspect [room_ref, client_name, join_id, chat_message]
-
     room_message = Message.from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
       {"MESSAGE", "#{chat_message}\n\n"},
     ])
+
     Chat.Rooms.add_message(room_message, room_ref)
   end
 
