@@ -1,4 +1,5 @@
 defmodule Message do
+  require Logger
   def to_hash data do
     data |> String.split("\n")
          |> Enum.drop(-1)
@@ -15,4 +16,44 @@ defmodule Message do
     [k, v] = String.split(line, ":")
     {k, String.lstrip(v)}
   end
+
+  def handle :join, message, socket do
+    Logger.info "have to handle join"
+
+    %{"JOIN_CHATROOM" => room_name,
+      "CLIENT_IP" => "0",
+      "PORT" => "0",
+      "CLIENT_NAME" => client_name} = message
+
+
+    {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
+    {:ok, room_ref} = Chat.Rooms.get_ref(room_name)
+
+    response = Message.from_list([
+      {"JOINED_CHATROOM", room_name},
+      {"SERVER_IP", @ip},
+      {"PORT", "WHAT IS THE PORT"},
+      {"ROOM_REF", "#{room_ref}"},
+      {"JOIN_ID", "#{join_id}"},
+    ])
+
+    :gen_tcp.send(socket, response)
+  end
+
+
+  def handle :chat, messsage, socket do
+    %{"CHAT" => room_ref,
+      "JOIN_ID" => join_id,
+      "CLIENT_" => client_name,
+      "MESSAGE" => chat_message} = message
+
+    Logger.info chat_message
+    
+  end
+
+  def handle kind, data, _ do
+    Logger.info "have to handle #{kind}"
+  end
+
+
 end
