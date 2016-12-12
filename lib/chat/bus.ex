@@ -74,15 +74,17 @@ defmodule Chat.Bus do
 
 
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
+    {:ok, room_ref} = Chat.Rooms.get_ref(room_name)
 
     response = Message.from_list([
       {"JOINED_CHATROOM", room_name},
       {"SERVER_IP", @ip},
-      {"PORT", ""},
-      {"ROOM_REF", ""},
-      {"JOIN_ID", ""},
+      {"PORT", "WHAT IS THE PORT"},
+      {"ROOM_REF", "#{room_ref}"},
+      {"JOIN_ID", "#{join_id}"},
     ])
-    Logger.info response
+
+    :gen_tcp.send(socket, response)
   end
 
 
