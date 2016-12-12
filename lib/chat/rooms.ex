@@ -12,31 +12,28 @@ defmodule Chat.Rooms do
   end
 
   def add_member({name, socket}, room_name) do
-    case Chat.Supervisor.get_room(room_name) do
-      {:error, :does_not_exist} -> Chat.Supervisor.start_room(room_name)
-      {:ok, pid}                -> :ok
+
+    {:ok, ref} = case Chat.Supervisor.get_room(room_name) do
+    {:error, :does_not_exist} -> Logger.info "can't find #{room_name}, starting"
+                                 Chat.Supervisor.start_room(room_name)
+    {:ok, ref}                -> {:ok, ref}
     end
 
-    GenServer.call(via_tuple(room_name), {:add_member, {name, socket}})
+    GenServer.call(via_tuple(ref), {:add_member, {name, socket}})
   end
 
   def drop_member({join_id, name}, room_name) do
     GenServer.cast(via_tuple(room_name), {:drop_member, {join_id, name}})
   end
 
-  def get_ref(room_name) do
-    GenServer.call(via_tuple(room_name), {:get_name})
-  end
-
-  defp via_tuple(room_name) do
-    {:via, :gproc, {:n, :l, {:chat_room, room_name}}}
+  defp via_tuple(room_ref) do
+    {:via, :gproc, {:n, :l, {:chat_room, room_ref}}}
   end
 
   # SERVER
 
   def init(_) do
-    state = %{:room_ref => :erlang.unique_integer,
-              :members => []}
+    state = %{:members => []}
     {:ok, state}
   end
 
@@ -63,12 +60,7 @@ defmodule Chat.Rooms do
     {name, socket} = new_member
     join_id    = :erlang.unique_integer
     new_member = {join_id, name, socket}
-    
     new_state = %{state | :members => [new_member | state[:members]]}
     {:reply, {:ok, join_id}, new_state}
-  end
-
-  def handle_call({:get_name}, _from, state) do
-    {:reply, {:ok, state[:room_ref]}, state}
   end
 end

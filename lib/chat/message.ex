@@ -29,7 +29,7 @@ defmodule Message do
 
 
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
-    {:ok, room_ref} = Chat.Rooms.get_ref(room_name)
+    {:ok, room_ref} = Chat.Supervisor.get_room(room_name)
 
     response = Message.from_list([
       {"JOINED_CHATROOM", room_name},
