@@ -59,9 +59,7 @@ defmodule Chat.Bus do
         "CHAT"           <> _ -> :chat
                             _ -> :noidea
     end
-
-    fields = Message.to_hash(data)
-    Message.handle(action, fields, socket)
+    Message.handle(action, data, socket)
   end
 
 end

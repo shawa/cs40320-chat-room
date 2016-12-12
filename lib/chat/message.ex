@@ -4,6 +4,7 @@ defmodule Message do
     data |> String.split("\n")
          |> Enum.drop(-1)
          |> Enum.map(fn(x) -> split_strip(x) end)
+         |> Enum.filter(fn(x) -> x != :empty end)
          |> Enum.into(%{})
   end
 
@@ -13,17 +14,18 @@ defmodule Message do
   end
 
   defp split_strip line do
-    [k, v] = String.split(line, ":")
-    {k, String.lstrip(v)}
+    case String.split(line, ":") do
+      [k, v] -> {k, String.lstrip(v)}
+      [""]   -> :empty
+    end
   end
 
-  def handle :join, message, socket do
+  def handle :join, data, socket do
     Logger.info "have to handle join"
-
     %{"JOIN_CHATROOM" => room_name,
       "CLIENT_IP" => "0",
       "PORT" => "0",
-      "CLIENT_NAME" => client_name} = message
+      "CLIENT_NAME" => client_name} = to_hash(data)
 
 
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
@@ -41,14 +43,14 @@ defmodule Message do
   end
 
 
-  def handle :chat, messsage, socket do
+  def handle :chat, data, socket do
     %{"CHAT" => room_ref,
       "JOIN_ID" => join_id,
       "CLIENT_" => client_name,
-      "MESSAGE" => chat_message} = message
+      "MESSAGE" => chat_message} = to_hash(data)
 
     Logger.info chat_message
-    
+
   end
 
   def handle kind, data, _ do
