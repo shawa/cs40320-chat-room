@@ -61,5 +61,31 @@ defmodule Message do
     Logger.info "have to handle #{kind}"
   end
 
+  def handle :leave, data, socket do
+    %{"LEAVE_CHATROOM" => room_ref,
+      "JOIN_ID" => join_id,
+      "CLIENT_NAME" => client_name} = to_hash(data)
 
+    response = Message.from_list([
+      {"LEFT_CHATROOM", "#{room_ref}"},
+      {"JOIN_ID", "#{join_id}"},
+    ])
+    :gen_tcp.send(socket, response)
+
+    Chat.Rooms.drop_member({join_id, client_name}, room_ref)
+
+    Message.from_list([
+      {"CHAT", "#{room_ref}"},
+      {"CLIENT_NAME", client_name},
+      {"MESSAGE", "#{client_name} has left the room\n\n"},
+    ]) |> Chat.Rooms.add_message(room_ref)
+  end
+
+  def handle :disconnect, data, socket do
+    %{"DISCONNECT" => room_ref,
+      "PORT" => "0",
+      "CLIENT_NAME" => client_name} = to_hash(data)
+
+    :gen_tcp.close(socket)
+  end
 end
