@@ -45,10 +45,9 @@ defmodule Message do
 
   def handle :chat, data, socket do
     %{"CHAT" => room_ref,
+      "CLIENT_NAME" => client_name,
       "JOIN_ID" => join_id,
-      "CLIENT_" => client_name,
       "MESSAGE" => chat_message} = to_hash(data)
-
     Logger.info chat_message
 
   end
