@@ -1,6 +1,5 @@
 defmodule Chat.Message do
   @port 5000
-  @ip System.get_env("CHAT_IP_ADDRESS")
 
   require Logger
   def to_hash data do
