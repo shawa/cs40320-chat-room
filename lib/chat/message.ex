@@ -54,7 +54,7 @@ defmodule Chat.Message do
     room_message = from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
-      {"MESSAGE", "#{client_name} has joined #{room_name}\n\n"},
+      {"MESSAGE", "#{client_name} has joined #{room_name}\n"},
     ])
 
     Chat.Rooms.add_message(room_message, room_ref)
@@ -70,7 +70,7 @@ defmodule Chat.Message do
     room_message = from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
-      {"MESSAGE", "#{chat_message}\n\n"},
+      {"MESSAGE", "#{chat_message}\n"},
     ])
 
     Chat.Rooms.add_message(room_message, room_ref)
@@ -93,7 +93,7 @@ defmodule Chat.Message do
     from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
-      {"MESSAGE", "#{client_name} has left the room\n\n"},
+      {"MESSAGE", "#{client_name} has left the room\n"},
     ]) |> Chat.Rooms.add_message(room_ref)
   end
 
