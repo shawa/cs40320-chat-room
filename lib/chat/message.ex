@@ -11,7 +11,7 @@ defmodule Chat.Message do
   end
 
   def from_list tuples do
-    tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}: #{v}" end)
+    tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}:#{v}" end)
            |> Enum.join("\n")
   end
 
