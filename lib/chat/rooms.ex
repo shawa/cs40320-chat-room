@@ -44,7 +44,7 @@ defmodule Chat.Rooms do
     {:noreply, members}
   end
 
-  def handle_call({:drop_member, {join_id, name}}, members) do
+  def handle_call({:drop_member, {join_id, name}}, _from, members) do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
     IO.inspect members
     new_members = members |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
