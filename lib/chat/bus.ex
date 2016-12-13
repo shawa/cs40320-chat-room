@@ -7,7 +7,7 @@ defmodule Chat.Bus do
 
   @tcp_options [
     :binary,        # recieve binaries
-    packet: :raw,   # don't want line-by-line anymore
+
     active: false,  # blocks on :gen_tcp:recv/2 until we get data
     reuseaddr: true # reuse address if listener has a crash
   ]
@@ -53,13 +53,13 @@ defmodule Chat.Bus do
 
   defp handle_message data, socket do
     {type, action} = case data do
-      "KILL_SERVICE"   <> _ -> {:control, :kill_self}
-      "HELO"           <> _ -> {:control, :helo_reply}
       "JOIN_CHATROOM"  <> _ -> {:chat, :join}
       "LEAVE_CHATROOM" <> _ -> {:chat, :leave}
       "DISCONNECT"     <> _ -> {:chat, :disconnect}
       "CHAT"           <> _ -> {:chat, :chat}
-                          _ -> {:chat, :noidea}
+      "KILL_SERVICE"   <> _ -> {:control, :kill_self}
+      "HELO"           <> _ -> {:control, :helo_reply}
+                          _ -> {:control, :undefined_message}
     end
 
    case type do
