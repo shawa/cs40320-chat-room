@@ -55,7 +55,7 @@ defmodule Chat.Rooms do
 
   def handle_call({:add_member, new_member}, _from, state) do
     {name, socket} = new_member
-    join_id    = :erlang.unique_integer
+    join_id    = :erlang.unique_integer([:positive])
     new_member = {join_id, name, socket}
     new_state = %{state | :members => [new_member | state[:members]]}
     {:reply, {:ok, join_id}, new_state}
