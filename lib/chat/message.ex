@@ -82,19 +82,21 @@ defmodule Chat.Message do
       "JOIN_ID" => join_id,
       "CLIENT_NAME" => client_name} = to_hash(data)
 
+    Logger.info "responding with leave protocol response"
     response = from_list([
       {"LEFT_CHATROOM", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"}
     ])
     :gen_tcp.send(socket, response)
 
-
-    from_list([
+    leave_message = from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
       {"MESSAGE", "#{client_name} has left the room\n"},
-    ]) |> Chat.Rooms.add_message(room_ref)
+    ])
 
+    Logger.info "sending leave message to room"
+    Chat.Rooms.add_message(leave_message, room_ref)
     Chat.Rooms.drop_member({join_id, client_name}, room_ref)
   end
 
