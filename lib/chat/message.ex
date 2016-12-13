@@ -13,6 +13,8 @@ defmodule Chat.Message do
   def from_list tuples do
     tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}:#{v}" end)
            |> Enum.join("\n")
+
+    tuples <> "\n"
   end
 
   defp split_strip line do
