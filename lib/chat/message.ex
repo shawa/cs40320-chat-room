@@ -11,12 +11,12 @@ defmodule Chat.Message do
   end
 
   def from_list tuples do
-    IO.inspect tuples
+    #IO.inspect tuples
     message = tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}:#{v}" end)
                      |> Enum.join("\n")
 
     response = message <> "\n"
-    IO.inspect response
+    #IO.inspect response
     response
   end
 
@@ -34,7 +34,7 @@ defmodule Chat.Message do
       "PORT" => "0",
       "CLIENT_NAME" => client_name} = to_hash(data)
 
-    IO.inspect(data)
+    #IO.inspect(data)
 
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
     {:ok, room_ref} = Chat.Supervisor.get_room(room_name)
@@ -47,7 +47,7 @@ defmodule Chat.Message do
       {"JOIN_ID", "#{join_id}"},
     ])
 
-    IO.inspect(response)
+    #IO.inspect(response)
 
     :gen_tcp.send(socket, response)
     
