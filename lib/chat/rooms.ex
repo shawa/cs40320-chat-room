@@ -32,36 +32,32 @@ defmodule Chat.Rooms do
   # SERVER
 
   def init(_) do
-    state = %{:members => []}
-    {:ok, state}
+    members = []
+    {:ok, members}
   end
 
-  def handle_cast({:add_message, message}, state) do
+  def handle_cast({:add_message, message}, members) do
     Logger.info "Broadcasting message"
     IO.inspect(message)
 
-    state[:members] |> Enum.map(fn(member) -> elem(member, 2) end)
-                    |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
+   members |> Enum.map(fn(member) -> elem(member, 2) end)
+           |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
 
-    {:noreply, state}
+    {:noreply, members}
   end
 
-  def handle_cast({:drop_member, {join_id, name}}, state) do
+  def handle_cast({:drop_member, {join_id, name}}, members) do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
-    IO.inspect state
-
-    new_members = state[:members] |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
-    new_state = %{state | :members => new_members}
-    
-    IO.inspect state
-    {:noreply, new_state}
+    IO.inspect members
+    new_members = members |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
+    IO.inspect new_members
+    {:noreply, new_members}
   end
 
-  def handle_call({:add_member, new_member}, _from, state) do
+  def handle_call({:add_member, new_member}, _from, members) do
     {name, socket} = new_member
     join_id    = :erlang.unique_integer([:positive])
-    new_member = {join_id, name, socket}
-    new_state = %{state | :members => [new_member | state[:members]]}
-    {:reply, {:ok, join_id}, new_state}
+    new_members = [{join_id, name, socket} | members]
+    {:reply, {:ok, join_id}, new_members}
   end
 end
