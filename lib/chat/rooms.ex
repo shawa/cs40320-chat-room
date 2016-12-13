@@ -8,7 +8,7 @@ defmodule Chat.Rooms do
   end
 
   def add_message(message, room_ref) do
-    GenServer.cast(via_tuple(room_ref), {:add_message, message})
+    GenServer.call(via_tuple(room_ref), {:add_message, message})
   end
 
   def add_member({name, socket}, room_name) do
@@ -36,7 +36,7 @@ defmodule Chat.Rooms do
     {:ok, members}
   end
 
-  def handle_cast({:add_message, message}, members) do
+  def handle_call({:add_message, message}, _from, members) do
     Logger.info "Broadcasting message"
     IO.inspect(message)
     members |> Enum.map(fn(member) -> elem(member, 2) end)
