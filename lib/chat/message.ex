@@ -1,5 +1,5 @@
 defmodule Chat.Message do
-  @ip "10.0.0.1"
+  @port 5000
 
   require Logger
   def to_hash data do
@@ -35,7 +35,7 @@ defmodule Chat.Message do
     response = from_list([
       {"JOINED_CHATROOM", room_name},
       {"SERVER_IP", @ip},
-      {"PORT", "WHAT IS THE PORT"},
+      {"PORT", "#{@port}"},
       {"ROOM_REF", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"},
     ])
