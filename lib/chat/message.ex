@@ -29,6 +29,7 @@ defmodule Chat.Message do
       "PORT" => "0",
       "CLIENT_NAME" => client_name} = to_hash(data)
 
+    IO.inspect(data)
 
     {:ok, join_id} = Chat.Rooms.add_member({client_name, socket}, room_name)
     {:ok, room_ref} = Chat.Supervisor.get_room(room_name)
@@ -40,6 +41,8 @@ defmodule Chat.Message do
       {"ROOM_REF", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"},
     ])
+
+    IO.inspect(response)
 
     :gen_tcp.send(socket, response)
   end
