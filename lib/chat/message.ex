@@ -87,7 +87,6 @@ defmodule Chat.Message do
       {"LEFT_CHATROOM", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"}
     ])
-    :gen_tcp.send(socket, response)
 
     leave_message = from_list([
       {"CHAT", "#{room_ref}"},
@@ -97,6 +96,7 @@ defmodule Chat.Message do
 
     Logger.info "sending leave message to room #{room_ref}"
     Chat.Rooms.add_message(leave_message, room_ref)
+    :gen_tcp.send(socket, response)
     Chat.Rooms.drop_member({join_id, client_name}, room_ref)
   end
 

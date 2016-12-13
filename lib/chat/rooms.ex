@@ -39,10 +39,12 @@ defmodule Chat.Rooms do
   end
 
   def handle_call({:add_message, message}, _from, members) do
-    Logger.info "Broadcasting message"
+    Logger.debug "Broadcasting message"
     IO.inspect(message)
     members |> Enum.map(fn(member) -> elem(member, 2) end)
             |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
+
+    Logger.debug "sent to all"
     {:reply, {:ok}, members}
   end
 
