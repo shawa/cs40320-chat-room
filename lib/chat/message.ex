@@ -88,13 +88,14 @@ defmodule Chat.Message do
     ])
     :gen_tcp.send(socket, response)
 
-    Chat.Rooms.drop_member({join_id, client_name}, room_ref)
 
     from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
       {"MESSAGE", "#{client_name} has left the room\n"},
     ]) |> Chat.Rooms.add_message(room_ref)
+
+    Chat.Rooms.drop_member({join_id, client_name}, room_ref)
   end
 
   def handle :disconnect, data, socket do
