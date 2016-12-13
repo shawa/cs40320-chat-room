@@ -92,7 +92,7 @@ defmodule Chat.Message do
     leave_message = from_list([
       {"CHAT", "#{room_ref}"},
       {"CLIENT_NAME", client_name},
-      {"MESSAGE", "#{client_name} has left the room\n"},
+      {"MESSAGE", "#{client_name} has left #{room_ref}\n"},
     ])
 
     Logger.info "sending leave message to room #{room_ref}"

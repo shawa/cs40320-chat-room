@@ -22,7 +22,7 @@ defmodule Chat.Rooms do
   end
 
   def drop_member({join_id, name}, room_ref) do
-    GenServer.cast(via_tuple(room_ref), {:drop_member, {join_id, name}})
+    GenServer.call(via_tuple(room_ref), {:drop_member, {join_id, name}})
   end
 
   defp via_tuple(room_ref) do
@@ -39,10 +39,8 @@ defmodule Chat.Rooms do
   def handle_cast({:add_message, message}, members) do
     Logger.info "Broadcasting message"
     IO.inspect(message)
-
-   members |> Enum.map(fn(member) -> elem(member, 2) end)
-           |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
-
+    members |> Enum.map(fn(member) -> elem(member, 2) end)
+            |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
     {:noreply, members}
   end
 
@@ -51,7 +49,7 @@ defmodule Chat.Rooms do
     IO.inspect members
     new_members = members |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
     IO.inspect new_members
-    {:noreply, new_members}
+    {:reply, {:ok, join_id}, new_members}
   end
 
   def handle_call({:add_member, new_member}, _from, members) do
