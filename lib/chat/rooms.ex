@@ -41,7 +41,7 @@ defmodule Chat.Rooms do
     IO.inspect(message)
     members |> Enum.map(fn(member) -> elem(member, 2) end)
             |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
-    {:noreply, members}
+    {:reply, {:ok}, members}
   end
 
   def handle_call({:drop_member, {join_id, name}}, _from, members) do
