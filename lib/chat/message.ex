@@ -50,6 +50,14 @@ defmodule Chat.Message do
     IO.inspect(response)
 
     :gen_tcp.send(socket, response)
+    
+    room_message = from_list([
+      {"CHAT", "#{room_ref}"},
+      {"CLIENT_NAME", client_name},
+      {"MESSAGE", "#{client_name} has joined #{room_name}\n\n"},
+    ])
+
+    Chat.Rooms.add_message(room_message, room_ref)
   end
 
 
