@@ -8,7 +8,7 @@ defmodule Chat.Supervisor do
              |> Base.encode16
              |> String.slice(0..9)
              |> Integer.parse(16)
-    ref
+    "#{ref}"
   end
 
   def start_link do

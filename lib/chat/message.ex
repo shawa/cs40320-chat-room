@@ -94,9 +94,9 @@ defmodule Chat.Message do
       {"MESSAGE", "#{client_name} has left #{room_ref}\n"},
     ])
 
+    :gen_tcp.send(socket, response)
     Logger.info "sending leave message to room #{room_ref}"
     Chat.Rooms.add_message(leave_message, room_ref)
-    :gen_tcp.send(socket, response)
     Chat.Rooms.drop_member({join_id, client_name}, room_ref)
   end
 
