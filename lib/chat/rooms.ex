@@ -7,8 +7,8 @@ defmodule Chat.Rooms do
     GenServer.start_link(__MODULE__, [], name: via_tuple(name))
   end
 
-  def add_message(message, room_name) do
-    GenServer.cast(via_tuple(room_name), {:add_message, message})
+  def add_message(message, room_ref) do
+    GenServer.cast(via_tuple(room_ref), {:add_message, message})
   end
 
   def add_member({name, socket}, room_name) do
@@ -21,8 +21,8 @@ defmodule Chat.Rooms do
     GenServer.call(via_tuple(ref), {:add_member, {name, socket}})
   end
 
-  def drop_member({join_id, name}, room_name) do
-    GenServer.cast(via_tuple(room_name), {:drop_member, {join_id, name}})
+  def drop_member({join_id, name}, room_ref) do
+    GenServer.cast(via_tuple(room_ref), {:drop_member, {join_id, name}})
   end
 
   defp via_tuple(room_ref) do
@@ -48,9 +48,12 @@ defmodule Chat.Rooms do
 
   def handle_cast({:drop_member, {join_id, name}}, state) do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
+    IO.inspect state
+
     new_members = state[:members] |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
     new_state = %{state | :members => new_members}
-
+    
+    IO.inspect state
     {:noreply, new_state}
   end
 

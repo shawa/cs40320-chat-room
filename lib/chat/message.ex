@@ -95,7 +95,7 @@ defmodule Chat.Message do
       {"MESSAGE", "#{client_name} has left the room\n"},
     ])
 
-    Logger.info "sending leave message to room"
+    Logger.info "sending leave message to room #{room_ref}"
     Chat.Rooms.add_message(leave_message, room_ref)
     Chat.Rooms.drop_member({join_id, client_name}, room_ref)
   end
