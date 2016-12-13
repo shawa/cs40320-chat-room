@@ -6,6 +6,7 @@ defmodule Chat.Supervisor do
   def room_ref room_name do
     {ref, ""} = :crypto.hash(:sha256, room_name)
              |> Base.encode16
+             |> String.slice(0..9)
              |> Integer.parse(16)
     ref
   end
