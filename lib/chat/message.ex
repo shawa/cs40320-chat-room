@@ -11,10 +11,13 @@ defmodule Chat.Message do
   end
 
   def from_list tuples do
-    tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}:#{v}" end)
-           |> Enum.join("\n")
+    IO.inspect tuples
+    message = tuples |> Enum.map(fn({k, v}) -> "#{String.upcase(k)}:#{v}" end)
+                     |> Enum.join("\n")
 
-    tuples <> "\n"
+    response = message <> "\n"
+    IO.inspect response
+    response
   end
 
   defp split_strip line do
