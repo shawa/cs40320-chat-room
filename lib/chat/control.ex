@@ -15,7 +15,7 @@ defmodule Chat.Control do
     response = """
     #{data}IP:#{@ip}
     Port:#{@port}
-    StudentID:#{student_id}
+    StudentID:#{@student_id}
     """
     :gen_tcp.send(socket, response)
   end
