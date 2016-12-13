@@ -17,7 +17,7 @@ defmodule Chat.Supervisor do
   def start_room(name) do
     Logger.info "starting #{name}"
     ref = room_ref(name)
-    {:ok, pid} = Supervisor.start_child(:chat_supervisor, [ref])
+    {:ok, _pid} = Supervisor.start_child(:chat_supervisor, [ref])
     {:ok, ref}
   end
 
@@ -25,7 +25,7 @@ defmodule Chat.Supervisor do
     ref = room_ref(name)
     case :gproc.where({:n, :l, {:chat_room, ref}}) do
       :undefined -> {:error, :does_not_exist}
-      pid        -> {:ok, ref}
+      _pid       -> {:ok, ref}
     end
   end
 

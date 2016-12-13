@@ -12,7 +12,6 @@ defmodule Chat.Rooms do
   end
 
   def add_member({name, socket}, room_name) do
-
     {:ok, ref} = case Chat.Supervisor.get_room(room_name) do
     {:error, :does_not_exist} -> Logger.info "can't find #{room_name}, starting"
                                  Chat.Supervisor.start_room(room_name)
@@ -40,20 +39,18 @@ defmodule Chat.Rooms do
   def handle_cast({:add_message, message}, state) do
     Logger.info "Broadcasting #{message}"
 
-    socks = state[:members] |> Enum.map(fn(member) -> elem(member, 2) end)
-                            |> Enum.map(fn(sock) -> :gen_tcp.send(sock, message) end)
+    state[:members] |> Enum.map(fn(member) -> elem(member, 2) end)
+                    |> Enum.map(fn(sock)   -> :gen_tcp.send(sock, message) end)
 
     {:noreply, state}
   end
 
   def handle_cast({:drop_member, {join_id, name}}, state) do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
-
-    new_members = Enum.filter(state[:members],
-                              fn x -> !match?({join_id, name, _}, x) end)
+    new_members = state[:members] |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
     new_state = %{state | :members => new_members}
 
-    {:noreply, new_members}
+    {:noreply, new_state}
   end
 
   def handle_call({:add_member, new_member}, _from, state) do

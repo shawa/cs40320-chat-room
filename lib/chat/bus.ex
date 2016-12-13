@@ -3,7 +3,7 @@ defmodule Chat.Bus do
   require Logger
 
   @port 5000
-  @ip "999.999.999.999"
+  @ip System.get_env("CHAT_IP_ADDRESS")
 
   @tcp_options [
     :binary,        # recieve binaries
@@ -12,8 +12,12 @@ defmodule Chat.Bus do
     reuseaddr: true # reuse address if listener has a crash
   ]
 
+  def init(_) do
+  end
+
   @doc false
   def init() do
+    Logger.info "Bus initiated, on #{@ip}:#{@port}"
     Logger.debug "Using port #{@port} from config"
     accept
   end

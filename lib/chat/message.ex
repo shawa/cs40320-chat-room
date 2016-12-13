@@ -1,4 +1,6 @@
 defmodule Chat.Message do
+  @ip "10.0.0.1"
+
   require Logger
   def to_hash data do
     data |> String.split("\n")
@@ -42,10 +44,10 @@ defmodule Chat.Message do
   end
 
 
-  def handle :chat, data, socket do
+  def handle :chat, data, _socket do
     %{"CHAT" => room_ref,
       "CLIENT_NAME" => client_name,
-      "JOIN_ID" => join_id,
+      "JOIN_ID" => _join_id,
       "MESSAGE" => chat_message} = to_hash(data)
 
     room_message = from_list([
@@ -79,15 +81,10 @@ defmodule Chat.Message do
   end
 
   def handle :disconnect, data, socket do
-    %{"DISCONNECT" => room_ref,
+    %{"DISCONNECT" => "0",
       "PORT" => "0",
-      "CLIENT_NAME" => client_name} = to_hash(data)
+      "CLIENT_NAME" => _client_name} = to_hash(data)
     :gen_tcp.close(socket)
   end
-
-  def handle kind, data, _ do
-    Logger.info "have to handle #{kind}"
-  end
-
 end
 
