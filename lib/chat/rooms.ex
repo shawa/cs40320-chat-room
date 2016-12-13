@@ -8,6 +8,8 @@ defmodule Chat.Rooms do
   end
 
   def add_message(message, room_ref) do
+    Logger.debug "called add_message"
+    IO.inspect message
     GenServer.call(via_tuple(room_ref), {:add_message, message})
   end
 
