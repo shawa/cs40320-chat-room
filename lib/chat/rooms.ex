@@ -62,8 +62,12 @@ defmodule Chat.Rooms do
 
   def handle_call({:add_member, new_member}, _from, members) do
     {name, socket} = new_member
-    join_id    = "#{:erlang.unique_integer([:positive])}"
-    new_members = [{join_id, name, socket} | members]
+    if Enum.any?(members, fn({_i, n, _p}) -> n == name end) do
+      new_members = members
+    else
+      join_id    = "#{:erlang.unique_integer([:positive])}"
+      new_members = [{join_id, name, socket} | members]
+    end
     {:reply, {:ok, join_id}, new_members}
   end
 end

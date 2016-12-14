@@ -47,7 +47,8 @@ defmodule Chat.Message do
       {"JOIN_ID", "#{join_id}"},
     ])
 
-    #IO.inspect(response)
+    Logger.Dbug
+    IO.inspect(response)
 
     :gen_tcp.send(socket, response)
     
