@@ -41,8 +41,8 @@ defmodule Chat.Message do
 
     response = from_list([
       {"JOINED_CHATROOM", room_name},
-      {"SERVER_IP", "0"},
-      {"PORT", "0"},
+      {"SERVER_IP", "#{@ip}"},
+      {"PORT", "#{@port}"},
       {"ROOM_REF", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"},
     ])
@@ -106,7 +106,7 @@ defmodule Chat.Message do
       "CLIENT_NAME" => client_name} = to_hash(data)
 
       
-    {_, rooms} = Registry.lookup(Chat.RoomRegistry, client_name)
+    [{_, rooms}] = Registry.lookup(Chat.RoomRegistry, client_name)
     rooms |> Enum.map(&Integer.parse/1)
           |> Enum.map(fn({val, ""}) -> val end)
           |> Enum.sort
@@ -115,8 +115,8 @@ defmodule Chat.Message do
                                             {"CLIENT_NAME", client_name},
                                             {"MESSAGE", "#{client_name} has disconnected left #{ref}\n"},
                                  ])
-                                 Chat.Rooms.add_message(disco, ref)
-                                 Chat.Rooms.drop_member({:dummy, client_name}, ref) end)
+                                 Chat.Rooms.add_message(disco, "#{ref}")
+                                 Chat.Rooms.drop_member({:dummy, client_name}, "#{ref}") end)
 
     :gen_tcp.close(socket)
   end
