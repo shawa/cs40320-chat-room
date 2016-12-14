@@ -76,7 +76,7 @@ defmodule Chat.Rooms do
 
     {status, new_members} = cond do
       Enum.any?(members, fn({_i, n, _p}) -> n == name end) -> {:already_member, members}
-      True -> {{:added}, [{join_id, name, socket} | members]}
+      True -> {:added, [{join_id, name, socket} | members]}
     end
 
     {:reply, {status, join_id}, new_members}
