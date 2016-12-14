@@ -60,14 +60,12 @@ defmodule Chat.Rooms do
     {:reply, {:ok}, members}
   end
 
-  def handle_call({:drop_member, {join_id, name}}, _from, members) do
-    Logger.info "Trying to drop #{name}, with id #{join_id}"
-    IO.inspect join_id
+  def handle_call({:drop_member, {_join_id, name}}, _from, members) do
+    Logger.info "Trying to drop #{name}, with id"
     IO.inspect members
-    new_members = Enum.reject members, fn(x) -> {i, n, _p} = x
-                                                {i, n} == {join_id, name} end
+    new_members = Enum.reject members, fn({_i, n, _p}) -> n == name end
     IO.inspect new_members
-    {:reply, {:ok, join_id}, new_members}
+    {:reply, {:ok, :dummy}, new_members}
   end
 
   def handle_call({:add_member, new_member}, _from, members) do

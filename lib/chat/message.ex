@@ -103,7 +103,21 @@ defmodule Chat.Message do
   def handle :disconnect, data, socket do
     %{"DISCONNECT" => "0",
       "PORT" => "0",
-      "CLIENT_NAME" => _client_name} = to_hash(data)
+      "CLIENT_NAME" => client_name} = to_hash(data)
+
+      
+    {_, rooms} = Registry.lookup(Chat.RoomRegistry, client_name)
+    rooms |> Enum.map(&Integer.parse/1)
+          |> Enum.map(fn({val, ""}) -> val end)
+          |> Enum.sort
+          |> Enum.map(fn(ref) -> disco = from_list([
+                                            {"CHAT", "#{ref}"},
+                                            {"CLIENT_NAME", client_name},
+                                            {"MESSAGE", "#{client_name} has disconnected left #{ref}\n"},
+                                 ])
+                                 Chat.Rooms.add_message(disco, ref)
+                                 Chat.Rooms.drop_member({:dummy, client_name}, ref) end)
+
     :gen_tcp.close(socket)
   end
 end
