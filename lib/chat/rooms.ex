@@ -75,8 +75,8 @@ defmodule Chat.Rooms do
     join_id = "#{:erlang.unique_integer([:positive])}"
 
     {status, new_members} = cond do
-      Enum.any?(members, fn({_i, n, _p}) -> n == name end) -> {:added, members}
-      True -> {{:already_member}, [{join_id, name, socket} | members]}
+      Enum.any?(members, fn({_i, n, _p}) -> n == name end) -> {:already_member, members}
+      True -> {{:added}, [{join_id, name, socket} | members]}
     end
 
     {:reply, {status, join_id}, new_members}
