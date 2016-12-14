@@ -17,6 +17,9 @@ defmodule Chat.Mixfile do
 
 
   defp deps do
-    [{:gproc, "0.3.1"}]
+    [
+      {:gproc, "0.3.1"},
+      {:registry, git: "https://github.com/elixir-lang/registry.git"}
+    ]
   end
 end
