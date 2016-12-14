@@ -24,7 +24,9 @@ defmodule Chat.Rooms do
   end
 
   def drop_member({join_id, name}, room_ref) do
-    GenServer.call(via_tuple(room_ref), {:drop_member, {join_id, name}})
+    res = GenServer.call(via_tuple(room_ref), {:drop_member, {join_id, name}})
+    Logger.debug "dropped"
+    res
   end
 
   defp via_tuple(room_ref) do
@@ -50,6 +52,7 @@ defmodule Chat.Rooms do
 
   def handle_call({:drop_member, {join_id, name}}, _from, members) do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
+    IO.inspect join_id
     IO.inspect members
     new_members = members |> Enum.filter(fn x -> !match?({join_id, name, _}, x) end)
     IO.inspect new_members
@@ -58,7 +61,7 @@ defmodule Chat.Rooms do
 
   def handle_call({:add_member, new_member}, _from, members) do
     {name, socket} = new_member
-    join_id    = :erlang.unique_integer([:positive])
+    join_id    = "#{:erlang.unique_integer([:positive])}"
     new_members = [{join_id, name, socket} | members]
     {:reply, {:ok, join_id}, new_members}
   end
