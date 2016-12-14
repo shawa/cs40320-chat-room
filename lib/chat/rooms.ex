@@ -54,8 +54,8 @@ defmodule Chat.Rooms do
     Logger.info "Trying to drop #{name}, with id #{join_id}"
     IO.inspect join_id
     IO.inspect members
-    new_members = members |> Enum.reject fn(x) -> {i, n, _p} = x
-                                                  {i, n} == {join_id, name} end
+    new_members = Enum.reject members, fn(x) -> {i, n, _p} = x
+                                                {i, n} == {join_id, name} end
     IO.inspect new_members
     {:reply, {:ok, join_id}, new_members}
   end
