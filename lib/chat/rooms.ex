@@ -23,7 +23,7 @@ defmodule Chat.Rooms do
     case GenServer.call(via_tuple(ref), {:add_member, {name, socket}}) do
       {:added, join_id} ->
         case Registry.update_value(Chat.RoomRegistry, name, fn (refs) -> [ref | refs] end) do
-          :error -> Registry.register(Chat.RoomRegistry, name, ref)
+          :error -> Registry.register(Chat.RoomRegistry, name, [ref])
           resp   -> resp
         end
         {:ok, join_id}
@@ -34,6 +34,7 @@ defmodule Chat.Rooms do
 
   def drop_member({join_id, name}, room_ref) do
     res = GenServer.call(via_tuple(room_ref), {:drop_member, {join_id, name}})
+    Registry.update_value(Chat.RoomRegistry, name, fn (refs) -> Enum.reject(refs, fn(ref) -> ref == room_ref end) end)
     Logger.debug "dropped"
     res
   end
