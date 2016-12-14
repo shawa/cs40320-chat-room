@@ -41,7 +41,7 @@ defmodule Chat.Message do
 
     response = from_list([
       {"JOINED_CHATROOM", room_name},
-      {"SERVER_IP", @ip},
+      {"SERVER_IP", "0"},
       {"PORT", "#{@port}"},
       {"ROOM_REF", "#{room_ref}"},
       {"JOIN_ID", "#{join_id}"},
