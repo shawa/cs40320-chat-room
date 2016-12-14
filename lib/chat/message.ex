@@ -105,6 +105,12 @@ defmodule Chat.Message do
     %{"DISCONNECT" => "0",
       "PORT" => "0",
       "CLIENT_NAME" => _client_name} = to_hash(data)
+
+    response = from_list([
+      {"DISCONNECT", "YOU DID IT?"}
+    ])
+
+    :gen_tcp.send(socket, response)
     :gen_tcp.close(socket)
   end
 end
