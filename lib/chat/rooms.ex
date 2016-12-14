@@ -20,7 +20,16 @@ defmodule Chat.Rooms do
     {:ok, ref}                -> {:ok, ref}
     end
 
-    GenServer.call(via_tuple(ref), {:add_member, {name, socket}})
+    case GenServer.call(via_tuple(ref), {:add_member, {name, socket}}) do
+      {:added, join_id} ->
+        case Registry.update_value(Chat.RoomRegistry, name, fn (refs) -> [ref | refs] end) do
+          :error -> Registry.register(Chat.RoomRegistry, name, ref)
+          resp   -> resp
+        end
+        {:ok, join_id}
+
+      {:already_member, join_id} -> {:ok, join_id}
+    end
   end
 
   def drop_member({join_id, name}, room_ref) do
@@ -65,11 +74,11 @@ defmodule Chat.Rooms do
 
     join_id = "#{:erlang.unique_integer([:positive])}"
 
-    new_members = cond do
-      Enum.any?(members, fn({_i, n, _p}) -> n == name end) -> members
-      True -> [{join_id, name, socket} | members]
+    {status, new_members} = cond do
+      Enum.any?(members, fn({_i, n, _p}) -> n == name end) -> {:added, members}
+      True -> [{:already_member}, {join_id, name, socket} | members]
     end
 
-    {:reply, {:ok, join_id}, new_members}
+    {:reply, {status, join_id}, new_members}
   end
 end
